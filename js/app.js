@@ -12,6 +12,7 @@ const APP = {
     xp: parseInt(localStorage.getItem('ta_xp') || '0'),
     lastDate: localStorage.getItem('ta_lastDate') || '',
     onboarded: localStorage.getItem('ta_onboarded') === 'true',
+    userName: localStorage.getItem('ta_userName') || '',
     quizWords: [],
     quizIndex: 0,
     quizLives: 3,
@@ -152,11 +153,20 @@ const APP = {
     this.state.level = level;
     document.querySelectorAll('#screen-onboarding3 .ob-option').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
-    setTimeout(() => {
-      this.state.onboarded = true;
-      this.save();
-      this.showScreen('home');
-    }, 300);
+    setTimeout(() => this.showScreen('onboarding4'), 300);
+  },
+
+  saveName(skip) {
+    if (skip === 'skip') {
+      this.state.userName = '';
+    } else {
+      const input = document.getElementById('ob-name-input');
+      this.state.userName = input.value.trim();
+    }
+    localStorage.setItem('ta_userName', this.state.userName);
+    this.state.onboarded = true;
+    this.save();
+    this.showScreen('home');
   },
 
   haptic(style) {
@@ -190,7 +200,10 @@ const APP = {
     document.getElementById('home-streak').textContent = this.state.streak;
     document.getElementById('home-words').textContent = totalLearned;
     document.getElementById('home-xp').textContent = this.state.xp;
-    document.getElementById('home-greeting').textContent = this.getGreeting();
+    const name = this.state.userName;
+    document.getElementById('home-greeting').textContent = name
+      ? `${this.getGreeting().replace('!', '')}, ${name}!`
+      : this.getGreeting();
 
     const wod = this.getWordOfDay();
     document.getElementById('home-word-of-day').innerHTML = `

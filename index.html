@@ -70,6 +70,16 @@
   </div>
 </div>
 
+<!-- Onboarding 4: Name -->
+<div class="screen onboarding" id="screen-onboarding4">
+  <div class="ob-dots"><span class="ob-dot done"></span><span class="ob-dot done"></span><span class="ob-dot done"></span></div>
+  <h1>Как тебя зовут?</h1>
+  <p>Чтобы приветствовать тебя по имени</p>
+  <input type="text" id="ob-name-input" class="ob-name-input" placeholder="Твоё имя" autocomplete="given-name" maxlength="20">
+  <button class="btn-white" onclick="APP.saveName()">Готово</button>
+  <button class="ob-skip" onclick="APP.saveName('skip')">Пропустить</button>
+</div>
+
 <!-- Home -->
 <div class="screen home" id="screen-home">
   <div class="home-header">
