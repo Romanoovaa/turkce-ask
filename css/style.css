@@ -148,7 +148,7 @@ body {
 .ob-option .ob-icon { font-size: 1.5rem; }
 
 /* ===== HOME ===== */
-.home {
+.home, .nav-screen {
   padding: 0 0 5rem;
   background: var(--bg);
 }
