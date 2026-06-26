@@ -227,6 +227,53 @@ body {
   margin-bottom: 6px;
 }
 
+/* Daily tasks */
+.daily-tasks {
+  margin: .75rem 1rem 0;
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  box-shadow: var(--shadow);
+  animation: slideUp .4s ease backwards;
+}
+.daily-title {
+  font-size: .85rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+.daily-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.daily-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: .85rem;
+  transition: opacity .2s;
+}
+.daily-item.done { opacity: .5; }
+.daily-item.done .daily-text { text-decoration: line-through; }
+.daily-check { font-size: 1rem; flex-shrink: 0; }
+.daily-text { flex: 1; font-weight: 600; color: var(--text); }
+.daily-progress { font-size: .75rem; font-weight: 800; color: var(--text-muted); }
+.daily-reward {
+  margin-top: 10px;
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--pink);
+  text-align: center;
+}
+.daily-bonus {
+  margin-top: 10px;
+  font-size: .8rem;
+  font-weight: 800;
+  color: var(--green-dark);
+  text-align: center;
+  animation: popIn .4s ease;
+}
+
 /* Word of the day */
 .word-of-day {
   margin: .75rem 1rem;

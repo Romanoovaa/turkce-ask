@@ -13,6 +13,12 @@ const APP = {
     lastDate: localStorage.getItem('ta_lastDate') || '',
     onboarded: localStorage.getItem('ta_onboarded') === 'true',
     userName: localStorage.getItem('ta_userName') || '',
+    dailyDate: localStorage.getItem('ta_dailyDate') || '',
+    dailyWords: parseInt(localStorage.getItem('ta_dailyWords') || '0'),
+    dailyQuizzes: parseInt(localStorage.getItem('ta_dailyQuizzes') || '0'),
+    dailyTranslations: parseInt(localStorage.getItem('ta_dailyTranslations') || '0'),
+    dailyBonusClaimed: localStorage.getItem('ta_dailyBonusClaimed') === 'true',
+    translationCount: parseInt(localStorage.getItem('ta_translationCount') || '0'),
     quizWords: [],
     quizIndex: 0,
     quizLives: 3,
@@ -22,6 +28,7 @@ const APP = {
 
   init() {
     this.checkStreak();
+    this.resetDailyIfNeeded();
     if (this.state.onboarded) {
       this.showScreen('home');
     } else {
@@ -36,6 +43,44 @@ const APP = {
     localStorage.setItem('ta_xp', this.state.xp);
     localStorage.setItem('ta_lastDate', this.state.lastDate);
     localStorage.setItem('ta_onboarded', this.state.onboarded);
+    localStorage.setItem('ta_dailyDate', this.state.dailyDate);
+    localStorage.setItem('ta_dailyWords', this.state.dailyWords);
+    localStorage.setItem('ta_dailyQuizzes', this.state.dailyQuizzes);
+    localStorage.setItem('ta_dailyTranslations', this.state.dailyTranslations);
+    localStorage.setItem('ta_dailyBonusClaimed', this.state.dailyBonusClaimed);
+    localStorage.setItem('ta_translationCount', this.state.translationCount);
+  },
+
+  resetDailyIfNeeded() {
+    const today = new Date().toDateString();
+    if (this.state.dailyDate !== today) {
+      this.state.dailyDate = today;
+      this.state.dailyWords = 0;
+      this.state.dailyQuizzes = 0;
+      this.state.dailyTranslations = 0;
+      this.state.dailyBonusClaimed = false;
+      this.save();
+    }
+  },
+
+  trackDaily(type) {
+    this.resetDailyIfNeeded();
+    if (type === 'word') this.state.dailyWords++;
+    if (type === 'quiz') this.state.dailyQuizzes++;
+    if (type === 'translation') this.state.dailyTranslations++;
+    this.save();
+    if (!this.state.dailyBonusClaimed && this.isDailyComplete()) {
+      this.state.dailyBonusClaimed = true;
+      this.addXP(50);
+      this.save();
+      setTimeout(() => {
+        this.showAchievementPopup({ emoji: '🎁', name: 'Бонус дня', desc: '+50 XP за все задания!' });
+      }, 600);
+    }
+  },
+
+  isDailyComplete() {
+    return this.state.dailyWords >= 5 && this.state.dailyQuizzes >= 1 && this.state.dailyTranslations >= 1;
   },
 
   checkStreak() {
@@ -224,6 +269,34 @@ const APP = {
     document.getElementById('home-xp').textContent = this.state.xp;
     const lvl = getLevel(this.state.xp);
     document.getElementById('home-level-badge').textContent = lvl.emoji + ' ' + lvl.name;
+
+    this.resetDailyIfNeeded();
+    const dw = Math.min(this.state.dailyWords, 5);
+    const dq = Math.min(this.state.dailyQuizzes, 1);
+    const dt = Math.min(this.state.dailyTranslations, 1);
+    const allDone = dw >= 5 && dq >= 1 && dt >= 1;
+    document.getElementById('home-daily').innerHTML = `
+      <div class="daily-title">${allDone ? '✅ Задания выполнены!' : '📋 Задания дня'}</div>
+      <div class="daily-items">
+        <div class="daily-item ${dw >= 5 ? 'done' : ''}">
+          <div class="daily-check">${dw >= 5 ? '✅' : '⬜'}</div>
+          <div class="daily-text">Выучи 5 слов</div>
+          <div class="daily-progress">${dw}/5</div>
+        </div>
+        <div class="daily-item ${dq >= 1 ? 'done' : ''}">
+          <div class="daily-check">${dq >= 1 ? '✅' : '⬜'}</div>
+          <div class="daily-text">Пройди квиз</div>
+          <div class="daily-progress">${dq}/1</div>
+        </div>
+        <div class="daily-item ${dt >= 1 ? 'done' : ''}">
+          <div class="daily-check">${dt >= 1 ? '✅' : '⬜'}</div>
+          <div class="daily-text">Переведи сообщение</div>
+          <div class="daily-progress">${dt}/1</div>
+        </div>
+      </div>
+      ${allDone ? '<div class="daily-bonus">🎁 +50 XP бонус получен!</div>' : '<div class="daily-reward">Выполни всё — получи 🎁 +50 XP</div>'}
+    `;
+
     const name = this.state.userName;
     document.getElementById('home-greeting').textContent = name
       ? `${this.getGreeting().replace('!', '')}, ${name}!`
@@ -336,6 +409,7 @@ const APP = {
     const word = words[this.state.currentCardIndex];
     if (!this.state.learned.includes(word.n)) {
       this.state.learned.push(word.n);
+      this.trackDaily('word');
     }
     this.addXP(5);
     const flashcard = document.getElementById('flashcard');
@@ -515,6 +589,7 @@ const APP = {
     const total = quizWords.length;
     const pct = Math.round(quizCorrect / total * 100);
     let emoji, message;
+    this.trackDaily('quiz');
     if (pct === 100) { emoji = '🎉'; message = 'Идеально!'; this.spawnConfetti(50); this.state.perfectQuiz = true; this.checkAchievements(); }
     else if (pct >= 80) { emoji = '🎉'; message = 'Отлично!'; this.spawnConfetti(40); }
     else if (pct >= 50) { emoji = '👍'; message = 'Хорошо!'; this.spawnConfetti(20); }
@@ -684,6 +759,8 @@ const APP = {
       result.innerHTML = analysis;
       btn.textContent = 'Перевести 💌';
       btn.disabled = false;
+      this.state.translationCount++;
+      this.trackDaily('translation');
     }, 300);
   },
 
