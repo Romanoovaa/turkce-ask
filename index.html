@@ -16,14 +16,21 @@
 
 <!-- Onboarding 1: Welcome -->
 <div class="screen onboarding active" id="screen-onboarding1">
+  <div class="ob-dots"><span class="ob-dot active"></span><span class="ob-dot"></span><span class="ob-dot"></span></div>
   <div class="logo">💕</div>
   <h1>Türkçe Aşk</h1>
-  <p>Турецкий язык для отношений. Учи слова, понимай его сообщения, говори с его семьёй.</p>
-  <button class="btn-white" onclick="APP.showScreen('onboarding2')">Начать</button>
+  <p>Учи турецкий для отношений. Понимай его сообщения. Говори с его семьёй.</p>
+  <div class="ob-features">
+    <div class="ob-feature">🃏 500 слов с контекстом</div>
+    <div class="ob-feature">💌 Переводи его сообщения</div>
+    <div class="ob-feature">🗣️ 60 фраз для жизни</div>
+  </div>
+  <button class="btn-white" onclick="APP.showScreen('onboarding2')">Начать бесплатно</button>
 </div>
 
 <!-- Onboarding 2: Goal -->
 <div class="screen onboarding" id="screen-onboarding2">
+  <div class="ob-dots"><span class="ob-dot done"></span><span class="ob-dot active"></span><span class="ob-dot"></span></div>
   <h1>Какая у тебя цель?</h1>
   <p>Это поможет подобрать нужные слова</p>
   <div class="ob-options">
@@ -36,6 +43,9 @@
     <button class="ob-option" onclick="APP.selectGoal('wedding', this)">
       <span class="ob-icon">💍</span> Готовиться к свадьбе
     </button>
+    <button class="ob-option" onclick="APP.selectGoal('living', this)">
+      <span class="ob-icon">🏠</span> Живу / переезжаю в Турцию
+    </button>
     <button class="ob-option" onclick="APP.selectGoal('general', this)">
       <span class="ob-icon">📚</span> Просто учить турецкий
     </button>
@@ -44,6 +54,7 @@
 
 <!-- Onboarding 3: Level -->
 <div class="screen onboarding" id="screen-onboarding3">
+  <div class="ob-dots"><span class="ob-dot done"></span><span class="ob-dot done"></span><span class="ob-dot active"></span></div>
   <h1>Твой уровень?</h1>
   <p>Начнём с подходящего места</p>
   <div class="ob-options">
@@ -62,8 +73,8 @@
 <!-- Home -->
 <div class="screen home" id="screen-home">
   <div class="home-header">
+    <div class="home-greeting" id="home-greeting">Доброе утро! 🌸</div>
     <h1>💕 Türkçe Aşk</h1>
-    <div class="sub">Турецкий для отношений</div>
     <div class="stats-row">
       <div class="stat-card">
         <div class="stat-num" id="home-streak">0</div>
@@ -79,6 +90,8 @@
       </div>
     </div>
   </div>
+  <div id="home-continue" class="home-continue" style="display:none"></div>
+  <div id="home-word-of-day" class="word-of-day"></div>
   <div class="sections-grid" id="sections-grid"></div>
 </div>
 

@@ -159,12 +159,71 @@ const APP = {
     }, 300);
   },
 
+  haptic(style) {
+    try {
+      if (window.Capacitor && Capacitor.Plugins.Haptics) {
+        Capacitor.Plugins.Haptics.impact({ style: style || 'LIGHT' });
+      } else if (navigator.vibrate) {
+        navigator.vibrate(style === 'HEAVY' ? 20 : 10);
+      }
+    } catch(e) {}
+  },
+
   // ===== HOME =====
+  getGreeting() {
+    const h = new Date().getHours();
+    if (h < 6) return 'Не спится? 🌙';
+    if (h < 12) return 'Доброе утро! 🌸';
+    if (h < 17) return 'Добрый день! ☀️';
+    if (h < 22) return 'Добрый вечер! 🌆';
+    return 'Доброй ночи! 🌙';
+  },
+
+  getWordOfDay() {
+    const today = new Date();
+    const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
+    return WORDS[dayOfYear % WORDS.length];
+  },
+
   renderHome() {
     const totalLearned = this.state.learned.length;
     document.getElementById('home-streak').textContent = this.state.streak;
     document.getElementById('home-words').textContent = totalLearned;
     document.getElementById('home-xp').textContent = this.state.xp;
+    document.getElementById('home-greeting').textContent = this.getGreeting();
+
+    const wod = this.getWordOfDay();
+    document.getElementById('home-word-of-day').innerHTML = `
+      <div class="wod-label">✨ Слово дня</div>
+      <div class="wod-word">${wod.tr}</div>
+      <div class="wod-translation">${wod.ru}</div>
+      ${wod.note ? `<div class="wod-context">${wod.note}</div>` : ''}
+    `;
+    document.getElementById('home-word-of-day').onclick = () => this.speak(wod.tr);
+
+    const cont = document.getElementById('home-continue');
+    if (this.state.currentSection && this.state.currentCardIndex > 0) {
+      const sec = SECTIONS.find(s => s.id === this.state.currentSection);
+      if (sec) {
+        const words = WORDS.filter(w => w.s === this.state.currentSection);
+        cont.style.display = 'flex';
+        cont.innerHTML = `
+          <div class="continue-icon">${sec.emoji}</div>
+          <div class="continue-info">
+            <div class="continue-title">Продолжить: ${sec.name}</div>
+            <div class="continue-sub">${this.state.currentCardIndex} из ${words.length} слов</div>
+          </div>
+          <div class="continue-arrow">→</div>
+        `;
+        cont.onclick = () => {
+          this.haptic('MEDIUM');
+          this.showScreen('cards');
+          this.renderCard();
+        };
+      }
+    } else {
+      cont.style.display = 'none';
+    }
 
     const grid = document.getElementById('sections-grid');
     grid.innerHTML = SECTIONS.map(sec => {
@@ -367,10 +426,12 @@ const APP = {
       btn.classList.add('correct');
       this.state.quizCorrect++;
       this.addXP(10);
+      this.haptic('MEDIUM');
       if (Math.random() > 0.5) this.spawnHearts(6);
     } else {
       btn.classList.add('wrong');
       this.state.quizLives--;
+      this.haptic('HEAVY');
       document.querySelectorAll('.quiz-option').forEach(b => {
         if (b.textContent === correct) b.classList.add('correct');
       });
@@ -790,4 +851,38 @@ const APP = {
   },
 };
 
-document.addEventListener('DOMContentLoaded', () => APP.init());
+document.addEventListener('DOMContentLoaded', () => {
+  APP.init();
+  APP.initSwipe();
+});
+
+// Swipe gestures for flashcards
+APP.initSwipe = function() {
+  let startX = 0, startY = 0, swiping = false;
+  document.addEventListener('touchstart', e => {
+    const card = e.target.closest('.flashcard');
+    if (!card) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    swiping = true;
+  }, { passive: true });
+
+  document.addEventListener('touchend', e => {
+    if (!swiping) return;
+    swiping = false;
+    const endX = e.changedTouches[0].clientX;
+    const endY = e.changedTouches[0].clientY;
+    const dx = endX - startX;
+    const dy = endY - startY;
+    if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx)) return;
+
+    const screen = APP.state.screen;
+    if (screen === 'cards') {
+      if (dx > 0) { APP.haptic('MEDIUM'); APP.cardKnow(); }
+      else { APP.haptic('LIGHT'); APP.cardAgain(); }
+    } else if (screen === 'phrase-cards') {
+      APP.haptic('LIGHT');
+      APP.nextPhrase();
+    }
+  }, { passive: true });
+};

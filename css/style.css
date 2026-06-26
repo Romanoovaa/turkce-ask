@@ -90,6 +90,47 @@ body {
 .onboarding .logo { font-size: 3.5rem; margin-bottom: 0; }
 .onboarding h1 { font-size: 2rem; font-weight: 900; }
 .onboarding p { font-size: 1rem; opacity: .9; max-width: 320px; line-height: 1.6; }
+/* Onboarding dots */
+.ob-dots {
+  display: flex;
+  gap: 8px;
+  position: absolute;
+  top: max(20px, env(safe-area-inset-top, 20px));
+  left: 50%;
+  transform: translateX(-50%);
+}
+.ob-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transition: all .3s;
+}
+.ob-dot.active {
+  width: 24px;
+  border-radius: 4px;
+  background: white;
+}
+.ob-dot.done { background: rgba(255,255,255,0.7); }
+
+/* Onboarding features */
+.ob-features {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 280px;
+}
+.ob-feature {
+  font-size: .85rem;
+  font-weight: 700;
+  opacity: .9;
+  animation: slideIn .4s ease backwards;
+}
+.ob-feature:nth-child(1) { animation-delay: .3s; }
+.ob-feature:nth-child(2) { animation-delay: .45s; }
+.ob-feature:nth-child(3) { animation-delay: .6s; }
+
 .onboarding .btn-white {
   background: white;
   color: var(--pink);
@@ -152,6 +193,71 @@ body {
   padding: 0 0 5rem;
   background: var(--bg);
 }
+.home-greeting {
+  font-size: .85rem;
+  font-weight: 700;
+  opacity: .85;
+  margin-bottom: 4px;
+  animation: slideIn .4s ease backwards;
+}
+
+/* Word of the day */
+.word-of-day {
+  margin: 0 1rem 1rem;
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  box-shadow: var(--shadow);
+  border-left: 4px solid var(--pink);
+  animation: slideUp .4s ease backwards;
+  animation-delay: .1s;
+  cursor: pointer;
+}
+.wod-label {
+  font-size: .7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--pink);
+  margin-bottom: 8px;
+}
+.wod-word {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--pink-dark);
+}
+.wod-translation {
+  font-size: .95rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.wod-context {
+  font-size: .8rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 6px;
+}
+
+/* Continue card */
+.home-continue {
+  margin: 1rem 1rem 0;
+  background: linear-gradient(135deg, var(--pink), var(--orange));
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: slideUp .4s ease backwards;
+  transition: transform .15s;
+}
+.home-continue:active { transform: scale(.97); }
+.continue-icon { font-size: 1.5rem; }
+.continue-info { flex: 1; }
+.continue-title { font-size: .9rem; font-weight: 800; }
+.continue-sub { font-size: .75rem; opacity: .85; margin-top: 2px; }
+.continue-arrow { font-size: 1.2rem; opacity: .7; }
 .home-header {
   background: linear-gradient(135deg, #E91E63, #FF7043);
   color: white;
