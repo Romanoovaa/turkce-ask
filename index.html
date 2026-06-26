@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#E91E63">
+<title>Türkçe Aşk — Турецкий для отношений</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Onboarding 1: Welcome -->
+<div class="screen onboarding active" id="screen-onboarding1">
+  <div class="logo">💕</div>
+  <h1>Türkçe Aşk</h1>
+  <p>Турецкий язык для отношений. Учи слова, понимай его сообщения, говори с его семьёй.</p>
+  <button class="btn-white" onclick="APP.showScreen('onboarding2')">Начать</button>
+</div>
+
+<!-- Onboarding 2: Goal -->
+<div class="screen onboarding" id="screen-onboarding2">
+  <h1>Какая у тебя цель?</h1>
+  <p>Это поможет подобрать нужные слова</p>
+  <div class="ob-options">
+    <button class="ob-option" onclick="APP.selectGoal('messages', this)">
+      <span class="ob-icon">💌</span> Понимать его сообщения
+    </button>
+    <button class="ob-option" onclick="APP.selectGoal('family', this)">
+      <span class="ob-icon">👨‍👩‍👧</span> Общаться с его семьёй
+    </button>
+    <button class="ob-option" onclick="APP.selectGoal('wedding', this)">
+      <span class="ob-icon">💍</span> Готовиться к свадьбе
+    </button>
+    <button class="ob-option" onclick="APP.selectGoal('general', this)">
+      <span class="ob-icon">📚</span> Просто учить турецкий
+    </button>
+  </div>
+</div>
+
+<!-- Onboarding 3: Level -->
+<div class="screen onboarding" id="screen-onboarding3">
+  <h1>Твой уровень?</h1>
+  <p>Начнём с подходящего места</p>
+  <div class="ob-options">
+    <button class="ob-option" onclick="APP.selectLevel('zero', this)">
+      <span class="ob-icon">🌱</span> Совсем новенькая
+    </button>
+    <button class="ob-option" onclick="APP.selectLevel('basic', this)">
+      <span class="ob-icon">🌿</span> Знаю пару слов
+    </button>
+    <button class="ob-option" onclick="APP.selectLevel('speaking', this)">
+      <span class="ob-icon">🌳</span> Уже немного общаемся
+    </button>
+  </div>
+</div>
+
+<!-- Home -->
+<div class="screen home" id="screen-home">
+  <div class="home-header">
+    <h1>💕 Türkçe Aşk</h1>
+    <div class="sub">Турецкий для отношений</div>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num" id="home-streak">0</div>
+        <div class="stat-label">🔥 Дней</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="home-words">0</div>
+        <div class="stat-label">📚 Слов</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="home-xp">0</div>
+        <div class="stat-label">⭐ XP</div>
+      </div>
+    </div>
+  </div>
+  <div class="sections-grid" id="sections-grid"></div>
+</div>
+
+<!-- Cards -->
+<div class="screen cards-screen" id="screen-cards">
+  <div class="cards-header">
+    <button class="back-btn" onclick="APP.showScreen('home')">←</button>
+    <h2 id="cards-title">Раздел</h2>
+  </div>
+  <div class="cards-progress-bar">
+    <div class="cards-progress-fill" style="width:0%"></div>
+  </div>
+  <div class="card-container" id="card-container">
+    <div class="flashcard" id="flashcard" onclick="APP.flipCard()">
+      <div class="card-face card-front">
+        <button class="fav-btn" id="card-fav" onclick="event.stopPropagation();APP.toggleFavorite()">☆</button>
+        <div class="card-turkish" id="card-turkish"></div>
+        <div class="card-hint">Нажми, чтобы перевернуть</div>
+        <button class="sound-btn" onclick="event.stopPropagation();APP.speak()">🔊</button>
+      </div>
+      <div class="card-face card-back">
+        <div class="card-russian" id="card-russian"></div>
+        <div class="card-context" id="card-context"></div>
+      </div>
+    </div>
+  </div>
+  <div class="card-actions">
+    <button class="card-action-btn btn-again" onclick="APP.cardAgain()">🔄 Ещё раз</button>
+    <button class="card-action-btn btn-know" onclick="APP.cardKnow()">✅ Знаю</button>
+  </div>
+</div>
+
+<!-- Quiz -->
+<div class="screen quiz-screen" id="screen-quiz">
+  <div class="quiz-header">
+    <button class="back-btn" onclick="APP.showScreen('home')">←</button>
+    <h2 id="quiz-counter">1 / 10</h2>
+    <div class="hearts" id="quiz-hearts">❤️❤️❤️</div>
+  </div>
+  <div class="cards-progress-bar">
+    <div class="cards-progress-fill" id="quiz-progress-fill" style="background:var(--pink);width:0%"></div>
+  </div>
+  <div class="quiz-question">
+    <div class="quiz-sub">Как переводится?</div>
+    <div class="quiz-word" id="quiz-word"></div>
+  </div>
+  <div class="quiz-options" id="quiz-options"></div>
+</div>
+
+<!-- Translate -->
+<div class="screen" id="screen-translate" style="padding:0 0 5rem;background:var(--bg)">
+  <div class="translate-header">
+    <h1>💌 Переведи его сообщение</h1>
+    <p>Вставь текст — узнай не только перевод, но и что он имел в виду</p>
+  </div>
+  <div class="translate-input-wrap">
+    <textarea id="translate-input" class="translate-input" placeholder="Вставь его сообщение на турецком..." rows="3"></textarea>
+    <button class="translate-btn" id="translate-btn" onclick="APP.translateMessage()">Перевести 💌</button>
+  </div>
+  <div id="translate-result" class="translate-result"></div>
+  <div class="translate-examples">
+    <div class="translate-examples-title">Попробуй с этими:</div>
+    <button class="example-chip" onclick="APP.setExample('Canım seni çok özledim, ne zaman geliyorsun?')">Canım seni çok özledim, ne zaman geliyorsun?</button>
+    <button class="example-chip" onclick="APP.setExample('Kıskanıyorum seni, kimlerle beraberdin?')">Kıskanıyorum seni, kimlerle beraberdin?</button>
+    <button class="example-chip" onclick="APP.setExample('Annem seni soruyor, aile yemeğine gel')">Annem seni soruyor, aile yemeğine gel</button>
+    <button class="example-chip" onclick="APP.setExample('Seninle evlenmek istiyorum, hayatım')">Seninle evlenmek istiyorum, hayatım</button>
+    <button class="example-chip" onclick="APP.setExample('Boş ver, önemli değil, sorun yok')">Boş ver, önemli değil, sorun yok</button>
+  </div>
+</div>
+
+<!-- Favorites -->
+<div class="screen" id="screen-favorites" style="padding:0 0 5rem;background:var(--bg)">
+  <div style="padding:2rem 1rem 1rem">
+    <h2 style="font-size:1.3rem;font-weight:900">⭐ Избранное</h2>
+  </div>
+  <div class="fav-list" id="fav-list"></div>
+</div>
+
+<!-- Bottom Nav -->
+<nav class="bottom-nav hidden">
+  <button class="nav-item active" data-screen="home" onclick="APP.showScreen('home')">
+    <span class="nav-icon">🏠</span>
+    <span class="nav-label">Главная</span>
+  </button>
+  <button class="nav-item" data-screen="translate" onclick="APP.showScreen('translate')">
+    <span class="nav-icon">💌</span>
+    <span class="nav-label">Переведи</span>
+  </button>
+  <button class="nav-item" data-screen="favorites" onclick="APP.showScreen('favorites')">
+    <span class="nav-icon">⭐</span>
+    <span class="nav-label">Избранное</span>
+  </button>
+</nav>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

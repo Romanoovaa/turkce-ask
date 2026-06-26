@@ -1,0 +1,530 @@
+const APP = {
+  state: {
+    screen: 'onboarding1',
+    goal: null,
+    level: null,
+    currentSection: null,
+    currentCardIndex: 0,
+    flipped: false,
+    learned: JSON.parse(localStorage.getItem('ta_learned') || '[]'),
+    favorites: JSON.parse(localStorage.getItem('ta_favorites') || '[]'),
+    streak: parseInt(localStorage.getItem('ta_streak') || '0'),
+    xp: parseInt(localStorage.getItem('ta_xp') || '0'),
+    lastDate: localStorage.getItem('ta_lastDate') || '',
+    onboarded: localStorage.getItem('ta_onboarded') === 'true',
+    quizWords: [],
+    quizIndex: 0,
+    quizLives: 3,
+    quizCorrect: 0,
+    quizAnswered: false,
+  },
+
+  init() {
+    this.checkStreak();
+    if (this.state.onboarded) {
+      this.showScreen('home');
+    } else {
+      this.showScreen('onboarding1');
+    }
+  },
+
+  save() {
+    localStorage.setItem('ta_learned', JSON.stringify(this.state.learned));
+    localStorage.setItem('ta_favorites', JSON.stringify(this.state.favorites));
+    localStorage.setItem('ta_streak', this.state.streak);
+    localStorage.setItem('ta_xp', this.state.xp);
+    localStorage.setItem('ta_lastDate', this.state.lastDate);
+    localStorage.setItem('ta_onboarded', this.state.onboarded);
+  },
+
+  checkStreak() {
+    const today = new Date().toDateString();
+    const last = this.state.lastDate;
+    if (!last) return;
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    if (last !== today && last !== yesterday) {
+      this.state.streak = 0;
+    }
+  },
+
+  recordActivity() {
+    const today = new Date().toDateString();
+    if (this.state.lastDate !== today) {
+      if (this.state.lastDate === new Date(Date.now() - 86400000).toDateString()) {
+        this.state.streak++;
+      } else {
+        this.state.streak = 1;
+      }
+      this.state.lastDate = today;
+    }
+    this.save();
+  },
+
+  addXP(amount) {
+    this.state.xp += amount;
+    this.recordActivity();
+  },
+
+  showScreen(name) {
+    this.state.screen = name;
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const nav = document.querySelector('.bottom-nav');
+    const showNav = ['home', 'favorites', 'translate'].includes(name);
+    nav.classList.toggle('hidden', !showNav);
+    if (showNav) {
+      document.querySelectorAll('.nav-item').forEach(n => {
+        n.classList.toggle('active', n.dataset.screen === name);
+      });
+    }
+
+    const el = document.getElementById('screen-' + name);
+    if (el) {
+      el.classList.add('active');
+      if (name === 'home') this.renderHome();
+      if (name === 'favorites') this.renderFavorites();
+    }
+  },
+
+  // ===== ONBOARDING =====
+  selectGoal(goal, btn) {
+    this.state.goal = goal;
+    document.querySelectorAll('#screen-onboarding2 .ob-option').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    setTimeout(() => this.showScreen('onboarding3'), 300);
+  },
+
+  selectLevel(level, btn) {
+    this.state.level = level;
+    document.querySelectorAll('#screen-onboarding3 .ob-option').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    setTimeout(() => {
+      this.state.onboarded = true;
+      this.save();
+      this.showScreen('home');
+    }, 300);
+  },
+
+  // ===== HOME =====
+  renderHome() {
+    const totalLearned = this.state.learned.length;
+    document.getElementById('home-streak').textContent = this.state.streak;
+    document.getElementById('home-words').textContent = totalLearned;
+    document.getElementById('home-xp').textContent = this.state.xp;
+
+    const grid = document.getElementById('sections-grid');
+    grid.innerHTML = SECTIONS.map(sec => {
+      const sectionWords = WORDS.filter(w => w.s === sec.id);
+      const learnedCount = sectionWords.filter(w => this.state.learned.includes(w.n)).length;
+      const pct = sectionWords.length > 0 ? Math.round(learnedCount / sectionWords.length * 100) : 0;
+      return `
+        <div class="section-card" onclick="APP.openSection('${sec.id}')">
+          <div class="section-emoji">${sec.emoji}</div>
+          <div class="section-name">${sec.name}</div>
+          <div class="section-count">${learnedCount} / ${sectionWords.length}</div>
+          <div class="section-progress">
+            <div class="section-progress-bar" style="width:${pct}%;background:${sec.color}"></div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  // ===== CARDS =====
+  openSection(sectionId) {
+    const sec = SECTIONS.find(s => s.id === sectionId);
+    this.state.currentSection = sectionId;
+    this.state.currentCardIndex = 0;
+    this.state.flipped = false;
+
+    document.getElementById('cards-title').textContent = sec.emoji + ' ' + sec.name;
+    document.querySelector('.cards-progress-fill').style.background = sec.color;
+    this.showScreen('cards');
+    this.renderCard();
+  },
+
+  getSectionWords() {
+    return WORDS.filter(w => w.s === this.state.currentSection);
+  },
+
+  renderCard() {
+    const words = this.getSectionWords();
+    const idx = this.state.currentCardIndex;
+    if (idx >= words.length) {
+      this.showSectionComplete();
+      return;
+    }
+    const word = words[idx];
+    const pct = Math.round((idx / words.length) * 100);
+    document.querySelector('.cards-progress-fill').style.width = pct + '%';
+
+    const flashcard = document.getElementById('flashcard');
+    flashcard.classList.remove('flipped');
+    this.state.flipped = false;
+
+    document.getElementById('card-turkish').textContent = word.tr;
+    document.getElementById('card-russian').textContent = word.ru;
+    const ctx = document.getElementById('card-context');
+    ctx.textContent = word.note || '';
+    ctx.style.display = word.note ? 'block' : 'none';
+
+    const favBtn = document.getElementById('card-fav');
+    favBtn.classList.toggle('active', this.state.favorites.includes(word.n));
+    favBtn.textContent = this.state.favorites.includes(word.n) ? '⭐' : '☆';
+  },
+
+  flipCard() {
+    const flashcard = document.getElementById('flashcard');
+    this.state.flipped = !this.state.flipped;
+    flashcard.classList.toggle('flipped', this.state.flipped);
+  },
+
+  cardKnow() {
+    const words = this.getSectionWords();
+    const word = words[this.state.currentCardIndex];
+    if (!this.state.learned.includes(word.n)) {
+      this.state.learned.push(word.n);
+    }
+    this.addXP(5);
+    this.state.currentCardIndex++;
+    this.renderCard();
+  },
+
+  cardAgain() {
+    this.state.currentCardIndex++;
+    this.renderCard();
+  },
+
+  toggleFavorite() {
+    const words = this.getSectionWords();
+    const word = words[this.state.currentCardIndex];
+    const idx = this.state.favorites.indexOf(word.n);
+    if (idx > -1) {
+      this.state.favorites.splice(idx, 1);
+    } else {
+      this.state.favorites.push(word.n);
+    }
+    this.save();
+    const favBtn = document.getElementById('card-fav');
+    favBtn.classList.toggle('active', this.state.favorites.includes(word.n));
+    favBtn.textContent = this.state.favorites.includes(word.n) ? '⭐' : '☆';
+  },
+
+  showSectionComplete() {
+    document.querySelector('.cards-progress-fill').style.width = '100%';
+    document.querySelector('.card-container').innerHTML = `
+      <div class="quiz-result">
+        <div class="result-emoji">🎉</div>
+        <h2>Раздел пройден!</h2>
+        <p style="color:#888;margin-bottom:1rem">Отличная работа! Теперь проверь себя</p>
+        <button class="btn-primary" onclick="APP.startQuiz()">Пройти тест</button>
+        <br>
+        <button class="btn-secondary" onclick="APP.showScreen('home')">На главную</button>
+      </div>
+    `;
+    document.querySelector('.card-actions').style.display = 'none';
+  },
+
+  // ===== SPEAK =====
+  speak(text) {
+    if (!text) {
+      const words = this.getSectionWords();
+      text = words[this.state.currentCardIndex]?.tr;
+    }
+    if (!text) return;
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'tr-TR';
+    u.rate = 0.85;
+    speechSynthesis.speak(u);
+  },
+
+  // ===== QUIZ =====
+  startQuiz() {
+    const sectionWords = this.getSectionWords();
+    const shuffled = [...sectionWords].sort(() => Math.random() - 0.5);
+    this.state.quizWords = shuffled.slice(0, Math.min(10, shuffled.length));
+    this.state.quizIndex = 0;
+    this.state.quizLives = 3;
+    this.state.quizCorrect = 0;
+    this.state.quizAnswered = false;
+    this.showScreen('quiz');
+    this.renderQuiz();
+  },
+
+  renderQuiz() {
+    const { quizWords, quizIndex, quizLives } = this.state;
+    if (quizIndex >= quizWords.length || quizLives <= 0) {
+      this.showQuizResult();
+      return;
+    }
+
+    const word = quizWords[quizIndex];
+    const hearts = document.getElementById('quiz-hearts');
+    hearts.innerHTML = '❤️'.repeat(quizLives) + '🖤'.repeat(3 - quizLives);
+
+    const pct = Math.round((quizIndex / quizWords.length) * 100);
+    document.getElementById('quiz-progress-fill').style.width = pct + '%';
+
+    document.getElementById('quiz-word').textContent = word.tr;
+    document.getElementById('quiz-counter').textContent = `${quizIndex + 1} / ${quizWords.length}`;
+
+    const sectionWords = WORDS.filter(w => w.s === this.state.currentSection);
+    const wrongOptions = sectionWords
+      .filter(w => w.n !== word.n)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3)
+      .map(w => w.ru);
+
+    const options = [...wrongOptions, word.ru].sort(() => Math.random() - 0.5);
+
+    const container = document.getElementById('quiz-options');
+    this.state.quizAnswered = false;
+    container.innerHTML = options.map(opt => `
+      <button class="quiz-option" onclick="APP.answerQuiz(this, '${this.escapeHtml(opt)}', '${this.escapeHtml(word.ru)}')">${opt}</button>
+    `).join('');
+  },
+
+  escapeHtml(str) {
+    return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  },
+
+  answerQuiz(btn, selected, correct) {
+    if (this.state.quizAnswered) return;
+    this.state.quizAnswered = true;
+
+    document.querySelectorAll('.quiz-option').forEach(b => b.classList.add('disabled'));
+
+    if (selected === correct) {
+      btn.classList.add('correct');
+      this.state.quizCorrect++;
+      this.addXP(10);
+    } else {
+      btn.classList.add('wrong');
+      this.state.quizLives--;
+      document.querySelectorAll('.quiz-option').forEach(b => {
+        if (b.textContent === correct) b.classList.add('correct');
+      });
+    }
+
+    const hearts = document.getElementById('quiz-hearts');
+    hearts.innerHTML = '❤️'.repeat(this.state.quizLives) + '🖤'.repeat(3 - this.state.quizLives);
+
+    setTimeout(() => {
+      this.state.quizIndex++;
+      this.renderQuiz();
+    }, 1200);
+  },
+
+  showQuizResult() {
+    const { quizCorrect, quizWords, quizLives } = this.state;
+    const total = quizWords.length;
+    const pct = Math.round(quizCorrect / total * 100);
+    let emoji, message;
+    if (pct >= 80) { emoji = '🎉'; message = 'Отлично!'; }
+    else if (pct >= 50) { emoji = '👍'; message = 'Хорошо!'; }
+    else { emoji = '💪'; message = 'Попробуй ещё раз!'; }
+
+    const screen = document.getElementById('screen-quiz');
+    screen.innerHTML = `
+      <div class="quiz-result" style="padding-top:4rem">
+        <div class="result-emoji">${emoji}</div>
+        <h2>${message}</h2>
+        <div class="result-stats">
+          <div class="result-stat"><div class="num">${quizCorrect}/${total}</div><div class="label">Правильных</div></div>
+          <div class="result-stat"><div class="num">+${quizCorrect * 10}</div><div class="label">XP</div></div>
+        </div>
+        <button class="btn-primary" onclick="APP.retryQuiz()">Ещё раз</button>
+        <br>
+        <button class="btn-secondary" onclick="APP.showScreen('home')">На главную</button>
+      </div>
+    `;
+  },
+
+  retryQuiz() {
+    this.rebuildQuizScreen();
+    this.startQuiz();
+  },
+
+  rebuildQuizScreen() {
+    const screen = document.getElementById('screen-quiz');
+    screen.innerHTML = `
+      <div class="quiz-header">
+        <button class="back-btn" onclick="APP.showScreen('home')">←</button>
+        <h2 id="quiz-counter">1 / 10</h2>
+        <div class="hearts" id="quiz-hearts">❤️❤️❤️</div>
+      </div>
+      <div class="cards-progress-bar"><div class="cards-progress-fill" id="quiz-progress-fill" style="background:var(--pink);width:0%"></div></div>
+      <div class="quiz-question">
+        <div class="quiz-sub">Как переводится?</div>
+        <div class="quiz-word" id="quiz-word"></div>
+      </div>
+      <div class="quiz-options" id="quiz-options"></div>
+    `;
+  },
+
+  // ===== FAVORITES =====
+  renderFavorites() {
+    const container = document.getElementById('fav-list');
+    if (this.state.favorites.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">⭐</div>
+          <p>Пока нет избранных слов.<br>Нажмите ☆ на карточке, чтобы сохранить слово.</p>
+        </div>
+      `;
+      return;
+    }
+    const favWords = WORDS.filter(w => this.state.favorites.includes(w.n));
+    container.innerHTML = favWords.map(w => `
+      <div class="fav-item">
+        <div>
+          <div class="fav-tr">${w.tr}</div>
+          <div class="fav-ru">${w.ru}</div>
+        </div>
+        <button class="fav-remove" onclick="APP.removeFav(${w.n})">✕</button>
+      </div>
+    `).join('');
+  },
+
+  removeFav(n) {
+    this.state.favorites = this.state.favorites.filter(f => f !== n);
+    this.save();
+    this.renderFavorites();
+  },
+
+  // ===== TRANSLATE =====
+  setExample(text) {
+    document.getElementById('translate-input').value = text;
+    this.translateMessage();
+  },
+
+  translateMessage() {
+    const input = document.getElementById('translate-input').value.trim();
+    const result = document.getElementById('translate-result');
+    if (!input) {
+      result.innerHTML = '';
+      return;
+    }
+
+    const btn = document.getElementById('translate-btn');
+    btn.textContent = 'Анализирую...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      const analysis = this.analyzeText(input);
+      result.innerHTML = analysis;
+      btn.textContent = 'Перевести 💌';
+      btn.disabled = false;
+    }, 800);
+  },
+
+  analyzeText(text) {
+    const lower = text.toLowerCase();
+    const foundWords = WORDS.filter(w => lower.includes(w.tr.toLowerCase()));
+
+    const responses = this.getSmartResponse(lower, foundWords);
+
+    let html = `<div class="tr-card">`;
+    html += `<div class="tr-section"><div class="tr-label">📝 Перевод</div><div class="tr-text">${responses.translation}</div></div>`;
+    html += `<div class="tr-section"><div class="tr-label">💡 Что он имел в виду</div><div class="tr-text">${responses.meaning}</div></div>`;
+    html += `<div class="tr-section"><div class="tr-label">🎯 Как ответить</div><div class="tr-suggestions">`;
+    responses.replies.forEach(r => {
+      html += `<div class="tr-reply"><div class="tr-reply-tr">${r.tr}</div><div class="tr-reply-ru">${r.ru}</div></div>`;
+    });
+    html += `</div></div>`;
+
+    if (foundWords.length > 0) {
+      html += `<div class="tr-section"><div class="tr-label">📚 Слова из словаря</div><div class="tr-words">`;
+      foundWords.slice(0, 8).forEach(w => {
+        html += `<div class="tr-word-chip"><strong>${w.tr}</strong> — ${w.ru}</div>`;
+      });
+      html += `</div></div>`;
+    }
+
+    html += `</div>`;
+    return html;
+  },
+
+  getSmartResponse(text, foundWords) {
+    const patterns = [
+      {
+        keywords: ['özledim', 'özlüyorum', 'özlem'],
+        translation: 'Он говорит, что скучает по тебе.',
+        meaning: 'Это искреннее выражение чувств. Турки часто пишут это без повода — просто чтобы ты знала, что он думает о тебе. Хороший знак!',
+        replies: [
+          { tr: 'Ben de seni çok özledim!', ru: 'Я тоже очень скучала!' },
+          { tr: 'Ne zaman görüşeceğiz?', ru: 'Когда увидимся?' },
+          { tr: 'Kalbimdesin ❤️', ru: 'Ты в моём сердце ❤️' },
+        ]
+      },
+      {
+        keywords: ['kıskan', 'kimlerle', 'kim o', 'telefonunu göster'],
+        translation: 'Он ревнует или выражает беспокойство.',
+        meaning: 'Ревность в турецкой культуре часто воспринимается как знак любви, но важно отличать здоровую заботу от контроля. Если это разовое — скорее всего он просто волнуется. Если постоянно — стоит обсудить границы.',
+        replies: [
+          { tr: 'Sadece sen varsın, merak etme', ru: 'Есть только ты, не переживай' },
+          { tr: 'Sana güveniyorum, sen de bana güven', ru: 'Я тебе доверяю, и ты мне доверяй' },
+          { tr: 'Konuşalım mı?', ru: 'Давай поговорим?' },
+        ]
+      },
+      {
+        keywords: ['annem', 'aile', 'yemeğ', 'tanış'],
+        translation: 'Он говорит о семье — скорее всего приглашает на семейное мероприятие или передаёт слова мамы.',
+        meaning: 'Это очень серьёзный знак! В Турции знакомство с семьёй означает, что отношения для него важны. Если мама о тебе спрашивает — ты уже «одобрена». Обязательно скажи «Elinize sağlık» после еды!',
+        replies: [
+          { tr: 'Çok sevinirim! Ne zaman gelelim?', ru: 'Буду очень рада! Когда прийти?' },
+          { tr: 'Annenize selamlar 🌸', ru: 'Передай привет маме 🌸' },
+          { tr: 'Ne getireyim?', ru: 'Что мне принести?' },
+        ]
+      },
+      {
+        keywords: ['evlen', 'nikah', 'nişan', 'söz', 'yüzük'],
+        translation: 'Он говорит о свадьбе, помолвке или браке.',
+        meaning: 'Это серьёзные намерения. В турецкой культуре разговор о свадьбе — это не просто слова. Если он упоминает никях, нишан или юзюк — он думает о совместном будущем. Обсудите детали открыто.',
+        replies: [
+          { tr: 'Seninle her şeyi konuşabiliriz', ru: 'С тобой могу обсудить всё' },
+          { tr: 'Çok mutlu oldum!', ru: 'Я так счастлива!' },
+          { tr: 'Ailelerimiz tanışmalı', ru: 'Наши семьи должны познакомиться' },
+        ]
+      },
+      {
+        keywords: ['boş ver', 'önemli değil', 'sorun yok', 'geçti', 'unuttum'],
+        translation: 'Он говорит, что всё нормально, не важно, или пытается закрыть тему.',
+        meaning: '⚠️ Осторожно! Эти фразы в турецком часто скрывают обиду. «Önemli değil» может означать «мне очень важно, но я не хочу показывать». Если чувствуешь напряжение — лучше мягко спросить ещё раз.',
+        replies: [
+          { tr: 'Emin misin? Bana her şeyi söyleyebilirsin', ru: 'Ты уверен? Можешь мне всё рассказать' },
+          { tr: 'Senin için önemli olan benim için de önemli', ru: 'Что важно для тебя — важно и для меня' },
+          { tr: 'Konuşalım mı, canım?', ru: 'Поговорим, дорогой?' },
+        ]
+      },
+    ];
+
+    for (const p of patterns) {
+      if (p.keywords.some(k => text.includes(k))) {
+        return p;
+      }
+    }
+
+    if (foundWords.length > 0) {
+      const translations = foundWords.slice(0, 5).map(w => `${w.tr} — ${w.ru}`).join('; ');
+      return {
+        translation: `Найдены слова: ${translations}.`,
+        meaning: 'Попробуй составить общий смысл из найденных слов. Для точного анализа с контекстом подключи полную версию с ИИ.',
+        replies: [
+          { tr: 'Anladım!', ru: 'Поняла!' },
+          { tr: 'Tekrar söyler misin?', ru: 'Можешь повторить?' },
+        ]
+      };
+    }
+
+    return {
+      translation: 'Не удалось распознать текст в текущем словаре.',
+      meaning: 'Это сообщение содержит слова, которых пока нет в нашей базе. В полной версии с ИИ мы сможем перевести любой текст и объяснить контекст.',
+      replies: [
+        { tr: 'Anlamadım, tekrar yazar mısın?', ru: 'Не поняла, напишешь ещё раз?' },
+        { tr: 'Türkçe öğreniyorum 😊', ru: 'Учу турецкий 😊' },
+      ]
+    };
+  },
+};
+
+document.addEventListener('DOMContentLoaded', () => APP.init());
