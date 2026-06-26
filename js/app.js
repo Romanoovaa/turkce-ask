@@ -194,10 +194,12 @@ const APP = {
 
     const wod = this.getWordOfDay();
     document.getElementById('home-word-of-day').innerHTML = `
-      <div class="wod-label">✨ Слово дня</div>
-      <div class="wod-word">${wod.tr}</div>
-      <div class="wod-translation">${wod.ru}</div>
-      ${wod.note ? `<div class="wod-context">${wod.note}</div>` : ''}
+      <div class="wod-left">
+        <div class="wod-label">✨ Слово дня</div>
+        <div class="wod-word">${wod.tr}</div>
+        <div class="wod-translation">${wod.ru}</div>
+      </div>
+      <div class="wod-sound">🔊</div>
     `;
     document.getElementById('home-word-of-day').onclick = () => this.speak(wod.tr);
 
