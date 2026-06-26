@@ -6,6 +6,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#E91E63">
+<meta name="format-detection" content="telephone=no">
+<meta name="msapplication-tap-highlight" content="no">
 <title>Türkçe Aşk — Турецкий для отношений</title>
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="css/style.css">
@@ -238,5 +240,28 @@
 <script src="js/data.js"></script>
 <script src="js/phrases.js"></script>
 <script src="js/app.js"></script>
+<script>
+// Service Worker for offline
+if ('serviceWorker' in navigator && !window.Capacitor) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+// Capacitor initialization
+if (window.Capacitor) {
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const { StatusBar } = await import('https://unpkg.com/@capacitor/status-bar?module');
+      StatusBar.setStyle({ style: 'LIGHT' });
+    } catch(e) {}
+    try {
+      const { SplashScreen } = await import('https://unpkg.com/@capacitor/splash-screen?module');
+      SplashScreen.hide();
+    } catch(e) {}
+    try {
+      const { Keyboard } = await import('https://unpkg.com/@capacitor/keyboard?module');
+      Keyboard.setResizeMode({ mode: 'body' });
+    } catch(e) {}
+  });
+}
+</script>
 </body>
 </html>

@@ -18,13 +18,37 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
+html {
+  --sat: env(safe-area-inset-top);
+  --sab: env(safe-area-inset-bottom);
+  --sal: env(safe-area-inset-left);
+  --sar: env(safe-area-inset-right);
+}
 body {
   font-family: 'Nunito', sans-serif;
   background: var(--bg);
   color: var(--text);
   overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
   user-select: none;
+  padding-top: var(--sat);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1a1a;
+    --card: #2a2a2a;
+    --text: #f0f0f0;
+    --text-muted: #999;
+    --shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .section-card, .fav-item, .quiz-option, .phrase-cat-card { border-color: #333; }
+  .cards-progress-bar, .section-progress { background: #333; }
+  .quiz-option { border-color: #444; }
+  .translate-input { background: #2a2a2a; color: #f0f0f0; border-color: #444; }
+  .example-chip { background: #2a2a2a; border-color: #444; }
+  .bottom-nav { background: #1a1a1a; border-color: #333; }
+  nav button { color: #999; }
 }
 
 /* ===== SCREENS ===== */
