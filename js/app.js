@@ -485,12 +485,16 @@ const APP = {
       result.innerHTML = analysis;
       btn.textContent = 'Перевести 💌';
       btn.disabled = false;
-    }, 800);
+    }, 300);
   },
 
   analyzeText(text) {
     const lower = text.toLowerCase();
-    const foundWords = WORDS.filter(w => lower.includes(w.tr.toLowerCase()));
+    const words = lower.split(/\s+/);
+    const foundWords = WORDS.filter(w => {
+      const wLower = w.tr.toLowerCase();
+      return words.some(word => wLower.includes(word) || word.includes(wLower));
+    }).slice(0, 10);
 
     const responses = this.getSmartResponse(lower, foundWords);
 
