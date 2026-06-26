@@ -126,6 +126,66 @@
   <div class="quiz-options" id="quiz-options"></div>
 </div>
 
+<!-- Phrases -->
+<div class="screen" id="screen-phrases" style="padding:0 0 5rem;background:var(--bg)">
+  <div class="phrases-header">
+    <button class="back-btn" style="border-color:rgba(255,255,255,0.3);color:white" onclick="APP.showScreen('home')">←</button>
+    <div>
+      <h1>🗣️ Фразы</h1>
+      <p>Готовые фразы для реальных ситуаций</p>
+    </div>
+  </div>
+  <div id="phrase-categories" class="phrase-cats"></div>
+  <div id="phrase-list" class="phrase-list"></div>
+</div>
+
+<!-- Phrase detail -->
+<div class="screen" id="screen-phrase-cards" style="background:var(--bg);padding-bottom:2rem">
+  <div class="cards-header">
+    <button class="back-btn" onclick="APP.showScreen('phrases')">←</button>
+    <h2 id="phrase-cards-title">Фразы</h2>
+  </div>
+  <div class="cards-progress-bar">
+    <div class="cards-progress-fill" id="phrase-progress-fill" style="width:0%"></div>
+  </div>
+  <div id="phrase-card-container" class="card-container">
+    <div class="flashcard" id="phrase-flashcard" onclick="APP.flipPhraseCard()">
+      <div class="card-face card-front">
+        <div class="card-turkish" id="phrase-turkish" style="font-size:1.4rem"></div>
+        <div class="card-hint">Нажми, чтобы перевернуть</div>
+        <button class="sound-btn" onclick="event.stopPropagation();APP.speak(document.getElementById('phrase-turkish').textContent)">🔊</button>
+      </div>
+      <div class="card-face card-back">
+        <div class="card-russian" id="phrase-russian" style="font-size:1.3rem"></div>
+        <div class="card-context" id="phrase-context"></div>
+        <div class="phrase-situation" id="phrase-situation"></div>
+      </div>
+    </div>
+  </div>
+  <div class="card-actions" id="phrase-actions">
+    <button class="card-action-btn btn-again" onclick="APP.nextPhrase()">Далее →</button>
+    <button class="card-action-btn btn-know" onclick="APP.startFillExercise()">✏️ Задания</button>
+  </div>
+</div>
+
+<!-- Fill in the blank -->
+<div class="screen" id="screen-fill" style="background:var(--bg);padding-bottom:2rem">
+  <div class="quiz-header">
+    <button class="back-btn" onclick="APP.showScreen('home')">←</button>
+    <h2 id="fill-counter">1 / 10</h2>
+    <div class="hearts" id="fill-hearts">❤️❤️❤️</div>
+  </div>
+  <div class="cards-progress-bar">
+    <div class="cards-progress-fill" id="fill-progress-fill" style="background:var(--orange);width:0%"></div>
+  </div>
+  <div class="fill-question">
+    <div class="fill-label">Вставь пропущенное слово</div>
+    <div class="fill-sentence" id="fill-sentence"></div>
+    <div class="fill-translation" id="fill-translation"></div>
+  </div>
+  <div class="quiz-options" id="fill-options"></div>
+</div>
+
 <!-- Translate -->
 <div class="screen" id="screen-translate" style="padding:0 0 5rem;background:var(--bg)">
   <div class="translate-header">
@@ -161,6 +221,10 @@
     <span class="nav-icon">🏠</span>
     <span class="nav-label">Главная</span>
   </button>
+  <button class="nav-item" data-screen="phrases" onclick="APP.showScreen('phrases')">
+    <span class="nav-icon">🗣️</span>
+    <span class="nav-label">Фразы</span>
+  </button>
   <button class="nav-item" data-screen="translate" onclick="APP.showScreen('translate')">
     <span class="nav-icon">💌</span>
     <span class="nav-label">Переведи</span>
@@ -172,6 +236,7 @@
 </nav>
 
 <script src="js/data.js"></script>
+<script src="js/phrases.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

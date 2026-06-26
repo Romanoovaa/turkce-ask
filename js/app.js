@@ -69,7 +69,7 @@ const APP = {
     this.state.screen = name;
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const nav = document.querySelector('.bottom-nav');
-    const showNav = ['home', 'favorites', 'translate'].includes(name);
+    const showNav = ['home', 'favorites', 'translate', 'phrases'].includes(name);
     nav.classList.toggle('hidden', !showNav);
     if (showNav) {
       document.querySelectorAll('.nav-item').forEach(n => {
@@ -82,6 +82,7 @@ const APP = {
       el.classList.add('active');
       if (name === 'home') this.renderHome();
       if (name === 'favorites') this.renderFavorites();
+      if (name === 'phrases') this.renderPhrases();
     }
   },
 
@@ -442,6 +443,193 @@ const APP = {
 
     html += `</div>`;
     return html;
+  },
+
+  // ===== PHRASES =====
+  renderPhrases() {
+    const cats = document.getElementById('phrase-categories');
+    cats.innerHTML = PHRASE_CATEGORIES.map(c => {
+      const count = PHRASES.filter(p => p.cat === c.id).length;
+      return `
+        <div class="phrase-cat-card" onclick="APP.openPhraseCategory('${c.id}')" style="border-left:4px solid ${c.color}">
+          <span class="phrase-cat-emoji">${c.emoji}</span>
+          <div class="phrase-cat-info">
+            <div class="phrase-cat-name">${c.name}</div>
+            <div class="phrase-cat-count">${count} фраз</div>
+          </div>
+          <span class="phrase-cat-arrow">→</span>
+        </div>
+      `;
+    }).join('');
+
+    const list = document.getElementById('phrase-list');
+    list.innerHTML = `
+      <div class="fill-promo" onclick="APP.startFillExercise()">
+        <div class="fill-promo-icon">✏️</div>
+        <div class="fill-promo-text">
+          <div class="fill-promo-title">Вставь пропущенное слово</div>
+          <div class="fill-promo-sub">20 заданий — проверь свои знания</div>
+        </div>
+        <span class="phrase-cat-arrow">→</span>
+      </div>
+    `;
+  },
+
+  openPhraseCategory(catId) {
+    const cat = PHRASE_CATEGORIES.find(c => c.id === catId);
+    this.state.currentPhraseCat = catId;
+    this.state.currentPhraseIndex = 0;
+    document.getElementById('phrase-cards-title').textContent = cat.emoji + ' ' + cat.name;
+    document.getElementById('phrase-progress-fill').style.background = cat.color;
+    this.showScreen('phrase-cards');
+    this.renderPhraseCard();
+  },
+
+  getCatPhrases() {
+    return PHRASES.filter(p => p.cat === this.state.currentPhraseCat);
+  },
+
+  renderPhraseCard() {
+    const phrases = this.getCatPhrases();
+    const idx = this.state.currentPhraseIndex;
+    if (idx >= phrases.length) {
+      this.state.currentPhraseIndex = 0;
+      this.renderPhraseCard();
+      return;
+    }
+    const phrase = phrases[idx];
+    const pct = Math.round((idx / phrases.length) * 100);
+    document.getElementById('phrase-progress-fill').style.width = pct + '%';
+
+    const flashcard = document.getElementById('phrase-flashcard');
+    flashcard.classList.remove('flipped');
+
+    document.getElementById('phrase-turkish').textContent = phrase.tr;
+    document.getElementById('phrase-russian').textContent = phrase.ru;
+    document.getElementById('phrase-context').textContent = phrase.context;
+    document.getElementById('phrase-situation').textContent = '📍 ' + phrase.situation;
+  },
+
+  flipPhraseCard() {
+    document.getElementById('phrase-flashcard').classList.toggle('flipped');
+  },
+
+  nextPhrase() {
+    this.state.currentPhraseIndex++;
+    const phrases = this.getCatPhrases();
+    if (this.state.currentPhraseIndex >= phrases.length) {
+      this.state.currentPhraseIndex = 0;
+    }
+    this.renderPhraseCard();
+  },
+
+  // ===== FILL IN THE BLANK =====
+  startFillExercise() {
+    const shuffled = [...FILL_EXERCISES].sort(() => Math.random() - 0.5);
+    this.state.fillExercises = shuffled.slice(0, 10);
+    this.state.fillIndex = 0;
+    this.state.fillLives = 3;
+    this.state.fillCorrect = 0;
+    this.state.fillAnswered = false;
+    this.showScreen('fill');
+    this.renderFillExercise();
+  },
+
+  renderFillExercise() {
+    const { fillExercises, fillIndex, fillLives } = this.state;
+    if (fillIndex >= fillExercises.length || fillLives <= 0) {
+      this.showFillResult();
+      return;
+    }
+
+    const ex = fillExercises[fillIndex];
+    document.getElementById('fill-hearts').innerHTML = '❤️'.repeat(fillLives) + '🖤'.repeat(3 - fillLives);
+    document.getElementById('fill-counter').textContent = `${fillIndex + 1} / ${fillExercises.length}`;
+    document.getElementById('fill-progress-fill').style.width = Math.round((fillIndex / fillExercises.length) * 100) + '%';
+
+    const sentenceHtml = ex.sentence.replace('___', '<span class="fill-blank">______</span>');
+    document.getElementById('fill-sentence').innerHTML = sentenceHtml;
+    document.getElementById('fill-translation').textContent = ex.ru;
+
+    const options = [...ex.options].sort(() => Math.random() - 0.5);
+    this.state.fillAnswered = false;
+    document.getElementById('fill-options').innerHTML = options.map(opt => `
+      <button class="quiz-option" onclick="APP.answerFill(this, '${this.escapeHtml(opt)}', '${this.escapeHtml(ex.answer)}')">${opt}</button>
+    `).join('');
+  },
+
+  answerFill(btn, selected, correct) {
+    if (this.state.fillAnswered) return;
+    this.state.fillAnswered = true;
+
+    document.querySelectorAll('#fill-options .quiz-option').forEach(b => b.classList.add('disabled'));
+
+    if (selected === correct) {
+      btn.classList.add('correct');
+      this.state.fillCorrect++;
+      this.addXP(10);
+      const blank = document.querySelector('.fill-blank');
+      if (blank) { blank.textContent = correct; blank.classList.add('fill-filled'); }
+    } else {
+      btn.classList.add('wrong');
+      this.state.fillLives--;
+      document.querySelectorAll('#fill-options .quiz-option').forEach(b => {
+        if (b.textContent === correct) b.classList.add('correct');
+      });
+    }
+
+    document.getElementById('fill-hearts').innerHTML = '❤️'.repeat(this.state.fillLives) + '🖤'.repeat(3 - this.state.fillLives);
+
+    setTimeout(() => {
+      this.state.fillIndex++;
+      this.renderFillExercise();
+    }, 1200);
+  },
+
+  showFillResult() {
+    const { fillCorrect, fillExercises } = this.state;
+    const total = fillExercises.length;
+    const pct = Math.round(fillCorrect / total * 100);
+    let emoji, message;
+    if (pct >= 80) { emoji = '🎉'; message = 'Отлично!'; }
+    else if (pct >= 50) { emoji = '👍'; message = 'Хороший результат!'; }
+    else { emoji = '💪'; message = 'Попробуй ещё раз!'; }
+
+    const screen = document.getElementById('screen-fill');
+    screen.innerHTML = `
+      <div class="quiz-result" style="padding-top:4rem">
+        <div class="result-emoji">${emoji}</div>
+        <h2>${message}</h2>
+        <div class="result-stats">
+          <div class="result-stat"><div class="num">${fillCorrect}/${total}</div><div class="label">Правильных</div></div>
+          <div class="result-stat"><div class="num">+${fillCorrect * 10}</div><div class="label">XP</div></div>
+        </div>
+        <button class="btn-primary" onclick="APP.retryFill()">Ещё раз</button>
+        <br>
+        <button class="btn-secondary" onclick="APP.showScreen('home')">На главную</button>
+      </div>
+    `;
+  },
+
+  retryFill() {
+    const screen = document.getElementById('screen-fill');
+    screen.innerHTML = `
+      <div class="quiz-header">
+        <button class="back-btn" onclick="APP.showScreen('home')">←</button>
+        <h2 id="fill-counter">1 / 10</h2>
+        <div class="hearts" id="fill-hearts">❤️❤️❤️</div>
+      </div>
+      <div class="cards-progress-bar">
+        <div class="cards-progress-fill" id="fill-progress-fill" style="background:var(--orange);width:0%"></div>
+      </div>
+      <div class="fill-question">
+        <div class="fill-label">Вставь пропущенное слово</div>
+        <div class="fill-sentence" id="fill-sentence"></div>
+        <div class="fill-translation" id="fill-translation"></div>
+      </div>
+      <div class="quiz-options" id="fill-options"></div>
+    `;
+    this.startFillExercise();
   },
 
   getSmartResponse(text, foundWords) {
