@@ -63,6 +63,60 @@ const APP = {
   addXP(amount) {
     this.state.xp += amount;
     this.recordActivity();
+    this.showXPPopup(amount);
+  },
+
+  showXPPopup(amount) {
+    const popup = document.createElement('div');
+    popup.className = 'xp-popup';
+    popup.textContent = `+${amount} XP`;
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 1000);
+  },
+
+  spawnConfetti(count = 30) {
+    const container = document.createElement('div');
+    container.className = 'confetti-container';
+    const colors = ['#E91E63', '#FF7043', '#9C27B0', '#4CAF50', '#F9A825', '#2196F3', '#FF5722'];
+    const shapes = ['❤️', '💕', '⭐', '✨', '🎉'];
+    for (let i = 0; i < count; i++) {
+      const piece = document.createElement('div');
+      const useEmoji = Math.random() > 0.5;
+      if (useEmoji) {
+        piece.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+        piece.style.fontSize = (12 + Math.random() * 14) + 'px';
+        piece.style.background = 'none';
+      } else {
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.width = (6 + Math.random() * 8) + 'px';
+        piece.style.height = (6 + Math.random() * 8) + 'px';
+        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      }
+      piece.className = 'confetti-piece';
+      piece.style.left = Math.random() * 100 + '%';
+      piece.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+      piece.style.animationDelay = Math.random() * 0.5 + 's';
+      container.appendChild(piece);
+    }
+    document.body.appendChild(container);
+    setTimeout(() => container.remove(), 4000);
+  },
+
+  spawnHearts(count = 12) {
+    const container = document.createElement('div');
+    container.className = 'confetti-container';
+    for (let i = 0; i < count; i++) {
+      const heart = document.createElement('div');
+      heart.className = 'confetti-piece';
+      heart.textContent = '❤️';
+      heart.style.fontSize = (16 + Math.random() * 20) + 'px';
+      heart.style.left = Math.random() * 100 + '%';
+      heart.style.animationDuration = (2 + Math.random() * 2) + 's';
+      heart.style.animationDelay = Math.random() * 0.8 + 's';
+      container.appendChild(heart);
+    }
+    document.body.appendChild(container);
+    setTimeout(() => container.remove(), 5000);
   },
 
   showScreen(name) {
@@ -186,13 +240,27 @@ const APP = {
       this.state.learned.push(word.n);
     }
     this.addXP(5);
-    this.state.currentCardIndex++;
-    this.renderCard();
+    const flashcard = document.getElementById('flashcard');
+    flashcard.classList.add('card-exit-right');
+    setTimeout(() => {
+      this.state.currentCardIndex++;
+      flashcard.classList.remove('card-exit-right');
+      flashcard.classList.add('card-enter');
+      this.renderCard();
+      setTimeout(() => flashcard.classList.remove('card-enter'), 300);
+    }, 250);
   },
 
   cardAgain() {
-    this.state.currentCardIndex++;
-    this.renderCard();
+    const flashcard = document.getElementById('flashcard');
+    flashcard.classList.add('card-exit-left');
+    setTimeout(() => {
+      this.state.currentCardIndex++;
+      flashcard.classList.remove('card-exit-left');
+      flashcard.classList.add('card-enter');
+      this.renderCard();
+      setTimeout(() => flashcard.classList.remove('card-enter'), 300);
+    }, 250);
   },
 
   toggleFavorite() {
@@ -212,6 +280,7 @@ const APP = {
 
   showSectionComplete() {
     document.querySelector('.cards-progress-fill').style.width = '100%';
+    this.spawnConfetti(50);
     document.querySelector('.card-container').innerHTML = `
       <div class="quiz-result">
         <div class="result-emoji">🎉</div>
@@ -298,6 +367,7 @@ const APP = {
       btn.classList.add('correct');
       this.state.quizCorrect++;
       this.addXP(10);
+      if (Math.random() > 0.5) this.spawnHearts(6);
     } else {
       btn.classList.add('wrong');
       this.state.quizLives--;
@@ -320,8 +390,8 @@ const APP = {
     const total = quizWords.length;
     const pct = Math.round(quizCorrect / total * 100);
     let emoji, message;
-    if (pct >= 80) { emoji = '🎉'; message = 'Отлично!'; }
-    else if (pct >= 50) { emoji = '👍'; message = 'Хорошо!'; }
+    if (pct >= 80) { emoji = '🎉'; message = 'Отлично!'; this.spawnConfetti(40); }
+    else if (pct >= 50) { emoji = '👍'; message = 'Хорошо!'; this.spawnConfetti(20); }
     else { emoji = '💪'; message = 'Попробуй ещё раз!'; }
 
     const screen = document.getElementById('screen-quiz');
@@ -568,6 +638,7 @@ const APP = {
       btn.classList.add('correct');
       this.state.fillCorrect++;
       this.addXP(10);
+      if (Math.random() > 0.5) this.spawnHearts(6);
       const blank = document.querySelector('.fill-blank');
       if (blank) { blank.textContent = correct; blank.classList.add('fill-filled'); }
     } else {
@@ -591,8 +662,8 @@ const APP = {
     const total = fillExercises.length;
     const pct = Math.round(fillCorrect / total * 100);
     let emoji, message;
-    if (pct >= 80) { emoji = '🎉'; message = 'Отлично!'; }
-    else if (pct >= 50) { emoji = '👍'; message = 'Хороший результат!'; }
+    if (pct >= 80) { emoji = '🎉'; message = 'Отлично!'; this.spawnConfetti(40); }
+    else if (pct >= 50) { emoji = '👍'; message = 'Хороший результат!'; this.spawnConfetti(20); }
     else { emoji = '💪'; message = 'Попробуй ещё раз!'; }
 
     const screen = document.getElementById('screen-fill');
