@@ -29,11 +29,85 @@ const APP = {
   init() {
     this.checkStreak();
     this.resetDailyIfNeeded();
+    this.initSounds();
     if (this.state.onboarded) {
       this.showScreen('home');
+      if (this.state.streak >= 2) {
+        setTimeout(() => this.showStreakPopup(), 600);
+      }
     } else {
       this.showScreen('onboarding1');
     }
+  },
+
+  initSounds() {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    this.audioCtx = new AudioCtx();
+  },
+
+  playSound(type) {
+    if (!this.audioCtx) return;
+    const ctx = this.audioCtx;
+    if (ctx.state === 'suspended') ctx.resume();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    gain.gain.value = 0.15;
+
+    if (type === 'correct') {
+      osc.frequency.setValueAtTime(523, ctx.currentTime);
+      osc.frequency.setValueAtTime(659, ctx.currentTime + 0.1);
+      osc.frequency.setValueAtTime(784, ctx.currentTime + 0.2);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.4);
+    } else if (type === 'wrong') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(200, ctx.currentTime);
+      osc.frequency.setValueAtTime(150, ctx.currentTime + 0.15);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.3);
+    } else if (type === 'levelup') {
+      osc.frequency.setValueAtTime(523, ctx.currentTime);
+      osc.frequency.setValueAtTime(659, ctx.currentTime + 0.15);
+      osc.frequency.setValueAtTime(784, ctx.currentTime + 0.3);
+      osc.frequency.setValueAtTime(1047, ctx.currentTime + 0.45);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.7);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.7);
+    } else if (type === 'bonus') {
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(440, ctx.currentTime);
+      osc.frequency.setValueAtTime(880, ctx.currentTime + 0.1);
+      osc.frequency.setValueAtTime(1320, ctx.currentTime + 0.2);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.5);
+    }
+  },
+
+  showStreakPopup() {
+    const s = this.state.streak;
+    let message, emoji;
+    if (s >= 30) { emoji = '🏆'; message = `${s} дней подряд! Ты легенда!`; }
+    else if (s >= 14) { emoji = '💪'; message = `${s} дней! Невероятный результат!`; }
+    else if (s >= 7) { emoji = '🔥'; message = `${s} дней подряд! Целая неделя!`; }
+    else { emoji = '🔥'; message = `${s} дней подряд! Продолжай!`; }
+
+    const popup = document.createElement('div');
+    popup.className = 'streak-popup';
+    popup.innerHTML = `
+      <div class="streak-fire">${emoji}</div>
+      <div class="streak-count">${s}</div>
+      <div class="streak-text">${message}</div>
+      <button class="streak-btn" onclick="this.parentElement.remove()">Продолжить 💪</button>
+    `;
+    document.body.appendChild(popup);
+    this.haptic('MEDIUM');
+    setTimeout(() => { if (popup.parentElement) popup.remove(); }, 5000);
   },
 
   save() {
@@ -74,6 +148,7 @@ const APP = {
       this.addXP(50);
       this.save();
       setTimeout(() => {
+        this.playSound('bonus');
         this.showAchievementPopup({ emoji: '🎁', name: 'Бонус дня', desc: '+50 XP за все задания!' });
       }, 600);
     }
@@ -119,6 +194,7 @@ const APP = {
   },
 
   showLevelUpPopup(lvl) {
+    this.playSound('levelup');
     const popup = document.createElement('div');
     popup.className = 'achievement-popup';
     popup.innerHTML = `
@@ -558,12 +634,14 @@ const APP = {
       this.state.quizCorrect++;
       this.addXP(10);
       this.haptic('MEDIUM');
+      this.playSound('correct');
       if (Math.random() > 0.5) this.spawnHearts(6);
       setTimeout(() => { this.state.quizIndex++; this.renderQuiz(); }, 1000);
     } else {
       btn.classList.add('wrong');
       this.state.quizLives--;
       this.haptic('HEAVY');
+      this.playSound('wrong');
       document.querySelectorAll('.quiz-option').forEach(b => {
         if (b.textContent === correct) b.classList.add('correct');
       });
@@ -918,12 +996,16 @@ const APP = {
       btn.classList.add('correct');
       this.state.fillCorrect++;
       this.addXP(10);
+      this.haptic('MEDIUM');
+      this.playSound('correct');
       if (Math.random() > 0.5) this.spawnHearts(6);
       const blank = document.querySelector('.fill-blank');
       if (blank) { blank.textContent = correct; blank.classList.add('fill-filled'); }
     } else {
       btn.classList.add('wrong');
       this.state.fillLives--;
+      this.haptic('HEAVY');
+      this.playSound('wrong');
       document.querySelectorAll('#fill-options .quiz-option').forEach(b => {
         if (b.textContent === correct) b.classList.add('correct');
       });

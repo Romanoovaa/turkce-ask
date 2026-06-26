@@ -902,6 +902,56 @@ body {
 .ach-popup-name { font-size: 1.3rem; font-weight: 900; margin-top: 4px; }
 .ach-popup-desc { font-size: .85rem; color: var(--text-muted); margin-top: 4px; }
 
+/* Streak popup */
+.streak-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  animation: fadeIn .3s ease;
+}
+.streak-fire {
+  font-size: 4rem;
+  animation: float 2s ease-in-out infinite;
+}
+.streak-count {
+  font-size: 4rem;
+  font-weight: 900;
+  color: white;
+  margin-top: 8px;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.streak-text {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+  margin-top: 4px;
+  opacity: .9;
+}
+.streak-btn {
+  margin-top: 2rem;
+  background: white;
+  border: none;
+  padding: 14px 40px;
+  border-radius: 99px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--pink);
+  cursor: pointer;
+  animation: slideUp .4s ease backwards;
+  animation-delay: .3s;
+  transition: transform .15s;
+}
+.streak-btn:active { transform: scale(.95); }
+
 /* ===== CONFETTI & XP ===== */
 .confetti-container {
   position: fixed;
