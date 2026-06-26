@@ -227,6 +227,26 @@ body {
   margin-bottom: 6px;
 }
 
+/* Review card */
+.home-review {
+  margin: .75rem 1rem 0;
+  background: linear-gradient(135deg, #7B1FA2, #E040FB);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: slideUp .4s ease backwards;
+  transition: transform .15s;
+}
+.home-review:active { transform: scale(.97); }
+.review-icon { font-size: 1.5rem; }
+.review-info { flex: 1; }
+.review-title { font-size: .9rem; font-weight: 800; }
+.review-sub { font-size: .75rem; opacity: .85; margin-top: 2px; }
+
 /* Daily tasks */
 .daily-tasks {
   margin: .75rem 1rem 0;

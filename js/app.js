@@ -19,6 +19,7 @@ const APP = {
     dailyTranslations: parseInt(localStorage.getItem('ta_dailyTranslations') || '0'),
     dailyBonusClaimed: localStorage.getItem('ta_dailyBonusClaimed') === 'true',
     translationCount: parseInt(localStorage.getItem('ta_translationCount') || '0'),
+    srs: JSON.parse(localStorage.getItem('ta_srs') || '{}'),
     quizWords: [],
     quizIndex: 0,
     quizLives: 3,
@@ -123,6 +124,43 @@ const APP = {
     localStorage.setItem('ta_dailyTranslations', this.state.dailyTranslations);
     localStorage.setItem('ta_dailyBonusClaimed', this.state.dailyBonusClaimed);
     localStorage.setItem('ta_translationCount', this.state.translationCount);
+    localStorage.setItem('ta_srs', JSON.stringify(this.state.srs));
+  },
+
+  // ===== SPACED REPETITION =====
+  // Box 1: review now, Box 2: 1 day, Box 3: 3 days, Box 4: 7 days, Box 5: mastered
+  srsIntervals: [0, 0, 1, 3, 7, 30],
+
+  srsPromote(wordId) {
+    const entry = this.state.srs[wordId] || { box: 0, next: 0 };
+    entry.box = Math.min(entry.box + 1, 5);
+    entry.next = Date.now() + (this.srsIntervals[entry.box] * 86400000);
+    this.state.srs[wordId] = entry;
+    this.save();
+  },
+
+  srsDemote(wordId) {
+    this.state.srs[wordId] = { box: 1, next: 0 };
+    this.save();
+  },
+
+  startReview(words) {
+    this.state.reviewMode = true;
+    this.state.reviewWords = words;
+    this.state.currentCardIndex = 0;
+    document.getElementById('cards-title').textContent = '🧠 Повторение';
+    document.querySelector('.cards-progress-fill').style.background = '#9C27B0';
+    this.showScreen('cards');
+    this.renderCard();
+  },
+
+  getWordsForReview() {
+    const now = Date.now();
+    return WORDS.filter(w => {
+      const entry = this.state.srs[w.n];
+      if (!entry) return false;
+      return entry.box >= 1 && entry.box < 5 && entry.next <= now;
+    });
   },
 
   resetDailyIfNeeded() {
@@ -346,6 +384,26 @@ const APP = {
     const lvl = getLevel(this.state.xp);
     document.getElementById('home-level-badge').textContent = lvl.emoji + ' ' + lvl.name;
 
+    const reviewWords = this.getWordsForReview();
+    const reviewEl = document.getElementById('home-review');
+    if (reviewWords.length > 0) {
+      reviewEl.style.display = 'flex';
+      reviewEl.innerHTML = `
+        <div class="review-icon">🧠</div>
+        <div class="review-info">
+          <div class="review-title">Пора повторить!</div>
+          <div class="review-sub">${reviewWords.length} слов ждут повторения</div>
+        </div>
+        <div class="continue-arrow">→</div>
+      `;
+      reviewEl.onclick = () => {
+        this.haptic('MEDIUM');
+        this.startReview(reviewWords);
+      };
+    } else {
+      reviewEl.style.display = 'none';
+    }
+
     this.resetDailyIfNeeded();
     const dw = Math.min(this.state.dailyWords, 5);
     const dq = Math.min(this.state.dailyQuizzes, 1);
@@ -437,6 +495,8 @@ const APP = {
     this.state.currentSection = sectionId;
     this.state.currentCardIndex = 0;
     this.state.flipped = false;
+    this.state.reviewMode = false;
+    this.state.reviewWords = null;
 
     document.getElementById('cards-title').textContent = sec.emoji + ' ' + sec.name;
     document.querySelector('.cards-progress-fill').style.background = sec.color;
@@ -445,6 +505,9 @@ const APP = {
   },
 
   getSectionWords() {
+    if (this.state.reviewMode && this.state.reviewWords) {
+      return this.state.reviewWords;
+    }
     return WORDS.filter(w => w.s === this.state.currentSection);
   },
 
@@ -487,6 +550,7 @@ const APP = {
       this.state.learned.push(word.n);
       this.trackDaily('word');
     }
+    this.srsPromote(word.n);
     this.addXP(5);
     const flashcard = document.getElementById('flashcard');
     flashcard.classList.add('card-exit-right');
@@ -500,7 +564,10 @@ const APP = {
   },
 
   cardAgain() {
-    const flashcard = document.getElementById('flashcard');
+    const words = this.getSectionWords();
+    const word = words[this.state.currentCardIndex];
+    this.srsDemote(word.n);
+    const flashcard = document.getElementById('flashcard')
     flashcard.classList.add('card-exit-left');
     setTimeout(() => {
       this.state.currentCardIndex++;
