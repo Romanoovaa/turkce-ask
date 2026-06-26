@@ -32,7 +32,6 @@ body {
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   user-select: none;
-  padding-top: var(--sat);
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -889,31 +888,3 @@ body {
   transform: scale(.98);
 }
 
-/* Large iPhones (Pro Max, Air) */
-@media(min-width:414px){
-  .home-header { padding: 3rem 1.5rem 2.5rem; }
-  .sections-grid { gap: 14px; padding: 1.5rem 1.25rem; }
-  .section-card { padding: 1.5rem 1.25rem; }
-  .section-emoji { font-size: 2.2rem; }
-  .section-name { font-size: .9rem; }
-  .flashcard { height: 360px; }
-  .card-turkish { font-size: 2rem; }
-  .card-russian { font-size: 1.6rem; }
-  .quiz-word { font-size: 2.2rem; }
-  .quiz-option { padding: 18px 22px; font-size: 1.05rem; }
-  .fill-sentence { font-size: 1.5rem; }
-  .translate-header { padding: 3rem 1.5rem 2.5rem; }
-  .phrases-header { padding: 2.5rem 1.5rem 2rem; }
-  .bottom-nav { padding: 10px 0; }
-  .phrase-cat-card { padding: 18px; }
-}
-
-/* iOS safe area for bottom nav */
-@supports(padding: env(safe-area-inset-bottom)) {
-  .bottom-nav {
-    padding-bottom: calc(8px + env(safe-area-inset-bottom));
-  }
-  .home, #screen-phrases, #screen-translate, #screen-favorites {
-    padding-bottom: calc(5rem + env(safe-area-inset-bottom));
-  }
-}
