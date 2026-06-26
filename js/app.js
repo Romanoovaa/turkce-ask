@@ -62,9 +62,30 @@ const APP = {
   },
 
   addXP(amount) {
+    const oldLevel = getLevel(this.state.xp);
     this.state.xp += amount;
     this.recordActivity();
     this.showXPPopup(amount);
+    const newLevel = getLevel(this.state.xp);
+    if (newLevel.id > oldLevel.id) {
+      setTimeout(() => this.showLevelUpPopup(newLevel), 500);
+    }
+    this.checkAchievements();
+  },
+
+  showLevelUpPopup(lvl) {
+    const popup = document.createElement('div');
+    popup.className = 'achievement-popup';
+    popup.innerHTML = `
+      <div class="ach-popup-emoji">${lvl.emoji}</div>
+      <div class="ach-popup-title">Новый уровень!</div>
+      <div class="ach-popup-name">${lvl.name}</div>
+      <div class="ach-popup-desc">${lvl.nameRu}</div>
+    `;
+    document.body.appendChild(popup);
+    this.haptic('HEAVY');
+    this.spawnConfetti(40);
+    setTimeout(() => popup.remove(), 3500);
   },
 
   showXPPopup(amount) {
@@ -124,7 +145,7 @@ const APP = {
     this.state.screen = name;
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const nav = document.querySelector('.bottom-nav');
-    const showNav = ['home', 'favorites', 'translate', 'phrases'].includes(name);
+    const showNav = ['home', 'favorites', 'translate', 'phrases', 'profile'].includes(name);
     nav.classList.toggle('hidden', !showNav);
     if (showNav) {
       document.querySelectorAll('.nav-item').forEach(n => {
@@ -138,6 +159,7 @@ const APP = {
       if (name === 'home') this.renderHome();
       if (name === 'favorites') this.renderFavorites();
       if (name === 'phrases') this.renderPhrases();
+      if (name === 'profile') this.renderProfile();
     }
   },
 
@@ -200,6 +222,8 @@ const APP = {
     document.getElementById('home-streak').textContent = this.state.streak;
     document.getElementById('home-words').textContent = totalLearned;
     document.getElementById('home-xp').textContent = this.state.xp;
+    const lvl = getLevel(this.state.xp);
+    document.getElementById('home-level-badge').textContent = lvl.emoji + ' ' + lvl.name;
     const name = this.state.userName;
     document.getElementById('home-greeting').textContent = name
       ? `${this.getGreeting().replace('!', '')}, ${name}!`
@@ -491,7 +515,8 @@ const APP = {
     const total = quizWords.length;
     const pct = Math.round(quizCorrect / total * 100);
     let emoji, message;
-    if (pct >= 80) { emoji = '🎉'; message = 'Отлично!'; this.spawnConfetti(40); }
+    if (pct === 100) { emoji = '🎉'; message = 'Идеально!'; this.spawnConfetti(50); this.state.perfectQuiz = true; this.checkAchievements(); }
+    else if (pct >= 80) { emoji = '🎉'; message = 'Отлично!'; this.spawnConfetti(40); }
     else if (pct >= 50) { emoji = '👍'; message = 'Хорошо!'; this.spawnConfetti(20); }
     else { emoji = '💪'; message = 'Попробуй ещё раз!'; }
 
@@ -555,6 +580,79 @@ const APP = {
         <button class="fav-remove" onclick="APP.removeFav(${w.n})">✕</button>
       </div>
     `).join('');
+  },
+
+  // ===== PROFILE =====
+  renderProfile() {
+    const xp = this.state.xp;
+    const lvl = getLevel(xp);
+    const next = getNextLevel(xp);
+    const pct = getLevelProgress(xp);
+
+    document.getElementById('profile-emoji').textContent = lvl.emoji;
+    document.getElementById('profile-name').textContent = this.state.userName || 'Ученица';
+    document.getElementById('profile-level-name').innerHTML = `Уровень ${lvl.id}: <strong>${lvl.name}</strong> — ${lvl.nameRu}`;
+    document.getElementById('profile-xp-fill').style.width = pct + '%';
+    document.getElementById('profile-xp-fill').style.background = lvl.color;
+    document.getElementById('profile-xp-label').textContent = next
+      ? `${xp} / ${next.xp} XP до «${next.nameRu}»`
+      : `${xp} XP — Максимальный уровень!`;
+
+    document.getElementById('profile-stats').innerHTML = `
+      <div class="pstat"><div class="pstat-num">${this.state.streak}</div><div class="pstat-label">🔥 Дней подряд</div></div>
+      <div class="pstat"><div class="pstat-num">${this.state.learned.length}</div><div class="pstat-label">📚 Слов выучено</div></div>
+      <div class="pstat"><div class="pstat-num">${xp}</div><div class="pstat-label">⭐ XP</div></div>
+      <div class="pstat"><div class="pstat-num">${lvl.id}</div><div class="pstat-label">${lvl.emoji} Уровень</div></div>
+    `;
+
+    this.checkTimeAchievements();
+    const unlocked = JSON.parse(localStorage.getItem('ta_achievements') || '[]');
+    document.getElementById('achievements-grid').innerHTML = ACHIEVEMENTS.map(a => {
+      const done = unlocked.includes(a.id);
+      return `
+        <div class="achievement ${done ? 'unlocked' : 'locked'}">
+          <div class="ach-emoji">${done ? a.emoji : '🔒'}</div>
+          <div class="ach-name">${a.name}</div>
+          <div class="ach-desc">${a.desc}</div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  checkTimeAchievements() {
+    const h = new Date().getHours();
+    if (h >= 23 || h < 5) this.state.nightOwl = true;
+    if (h >= 5 && h < 7) this.state.earlyBird = true;
+  },
+
+  checkAchievements() {
+    const unlocked = JSON.parse(localStorage.getItem('ta_achievements') || '[]');
+    let newUnlock = false;
+    for (const a of ACHIEVEMENTS) {
+      if (!unlocked.includes(a.id) && a.check(this.state)) {
+        unlocked.push(a.id);
+        newUnlock = a;
+      }
+    }
+    if (newUnlock) {
+      localStorage.setItem('ta_achievements', JSON.stringify(unlocked));
+      this.showAchievementPopup(newUnlock);
+    }
+  },
+
+  showAchievementPopup(achievement) {
+    const popup = document.createElement('div');
+    popup.className = 'achievement-popup';
+    popup.innerHTML = `
+      <div class="ach-popup-emoji">${achievement.emoji}</div>
+      <div class="ach-popup-title">Новое достижение!</div>
+      <div class="ach-popup-name">${achievement.name}</div>
+      <div class="ach-popup-desc">${achievement.desc}</div>
+    `;
+    document.body.appendChild(popup);
+    this.haptic('HEAVY');
+    this.spawnConfetti(30);
+    setTimeout(() => popup.remove(), 3000);
   },
 
   removeFav(n) {

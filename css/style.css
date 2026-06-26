@@ -301,7 +301,14 @@ body {
   padding: 2.5rem 1.5rem 2rem;
   border-radius: 0 0 28px 28px;
 }
-.home-header h1 { font-size: 1.5rem; font-weight: 900; }
+.home-header h1 { font-size: 1.5rem; font-weight: 900; display: flex; align-items: center; gap: 8px; }
+.home-level-badge {
+  font-size: .65rem;
+  font-weight: 800;
+  background: rgba(255,255,255,0.25);
+  padding: 3px 10px;
+  border-radius: 99px;
+}
 
 .stats-row {
   display: flex;
@@ -760,6 +767,93 @@ body {
 }
 .empty-state .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
 .empty-state p { font-size: .9rem; line-height: 1.6; }
+
+/* ===== PROFILE ===== */
+.profile-header {
+  background: linear-gradient(135deg, #9C27B0, #E91E63);
+  color: white;
+  padding: 2.5rem 1.5rem 2rem;
+  border-radius: 0 0 28px 28px;
+  text-align: center;
+}
+.profile-level-emoji { font-size: 3rem; animation: float 3s ease-in-out infinite; }
+.profile-name { font-size: 1.3rem; font-weight: 900; margin-top: 8px; }
+.profile-level-name { font-size: .85rem; opacity: .9; margin-top: 4px; }
+.profile-xp-bar {
+  height: 8px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 8px;
+  margin-top: 1rem;
+  overflow: hidden;
+}
+.profile-xp-fill {
+  height: 100%;
+  border-radius: 8px;
+  transition: width .5s ease;
+}
+.profile-xp-label { font-size: .75rem; opacity: .8; margin-top: 6px; }
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 1rem;
+}
+.pstat {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.pstat-num { font-size: 1.5rem; font-weight: 900; color: var(--pink); }
+.pstat-label { font-size: .7rem; font-weight: 700; color: var(--text-muted); margin-top: 4px; }
+
+.profile-section-title {
+  font-size: 1rem;
+  font-weight: 900;
+  margin-bottom: .75rem;
+}
+
+.achievements-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  padding: 0 1rem 2rem;
+}
+.achievement {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 1rem .5rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+  transition: transform .15s;
+}
+.achievement.locked { opacity: .45; }
+.achievement.unlocked { border: 2px solid var(--pink-light); }
+.ach-emoji { font-size: 1.5rem; margin-bottom: 4px; }
+.ach-name { font-size: .7rem; font-weight: 800; color: #333; }
+.ach-desc { font-size: .6rem; color: var(--text-muted); margin-top: 2px; }
+
+/* Achievement popup */
+.achievement-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  z-index: 10000;
+  animation: popIn .5s ease;
+  min-width: 250px;
+}
+.ach-popup-emoji { font-size: 3rem; margin-bottom: 8px; }
+.ach-popup-title { font-size: .8rem; font-weight: 800; color: var(--pink); text-transform: uppercase; letter-spacing: .05em; }
+.ach-popup-name { font-size: 1.3rem; font-weight: 900; margin-top: 4px; }
+.ach-popup-desc { font-size: .85rem; color: var(--text-muted); margin-top: 4px; }
 
 /* ===== CONFETTI & XP ===== */
 .confetti-container {
