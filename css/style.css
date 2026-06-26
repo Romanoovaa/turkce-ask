@@ -599,6 +599,23 @@ body {
 }
 .quiz-option.disabled { pointer-events: none; }
 
+.quiz-hint {
+  margin: 12px 1rem 0;
+  padding: 14px 18px;
+  background: #fff3e0;
+  border-radius: 12px;
+  border-left: 4px solid #FF9800;
+  font-size: .9rem;
+  color: #E65100;
+  line-height: 1.5;
+  animation: slideUp .3s ease;
+}
+.quiz-hint-note {
+  font-size: .8rem;
+  color: #BF360C;
+  font-style: italic;
+}
+
 /* Quiz result */
 .quiz-result {
   text-align: center;

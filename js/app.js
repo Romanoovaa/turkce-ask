@@ -407,31 +407,49 @@ const APP = {
 
     const pct = Math.round((quizIndex / quizWords.length) * 100);
     document.getElementById('quiz-progress-fill').style.width = pct + '%';
-
-    document.getElementById('quiz-word').textContent = word.tr;
     document.getElementById('quiz-counter').textContent = `${quizIndex + 1} / ${quizWords.length}`;
 
+    const quizType = Math.random();
     const sectionWords = WORDS.filter(w => w.s === this.state.currentSection);
-    const wrongOptions = sectionWords
-      .filter(w => w.n !== word.n)
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 3)
-      .map(w => w.ru);
-
-    const options = [...wrongOptions, word.ru].sort(() => Math.random() - 0.5);
-
     const container = document.getElementById('quiz-options');
+    const questionEl = document.querySelector('.quiz-question');
     this.state.quizAnswered = false;
-    container.innerHTML = options.map(opt => `
-      <button class="quiz-option" onclick="APP.answerQuiz(this, '${this.escapeHtml(opt)}', '${this.escapeHtml(word.ru)}')">${opt}</button>
-    `).join('');
+
+    if (quizType < 0.4) {
+      // Type 1: турецкое → выбери русский
+      questionEl.innerHTML = `<div class="quiz-sub">Как переводится?</div><div class="quiz-word" id="quiz-word">${word.tr}</div>`;
+      const wrongOptions = sectionWords.filter(w => w.n !== word.n).sort(() => Math.random() - 0.5).slice(0, 3).map(w => w.ru);
+      const options = [...wrongOptions, word.ru].sort(() => Math.random() - 0.5);
+      container.innerHTML = options.map(opt => `
+        <button class="quiz-option" onclick="APP.answerQuiz(this, '${this.escapeHtml(opt)}', '${this.escapeHtml(word.ru)}', '${this.escapeHtml(word.tr)}', '${this.escapeHtml(word.note)}')">${opt}</button>
+      `).join('');
+    } else if (quizType < 0.7) {
+      // Type 2: русское → выбери турецкий
+      questionEl.innerHTML = `<div class="quiz-sub">Выбери турецкий вариант</div><div class="quiz-word" id="quiz-word">${word.ru}</div>`;
+      const wrongOptions = sectionWords.filter(w => w.n !== word.n).sort(() => Math.random() - 0.5).slice(0, 3).map(w => w.tr);
+      const options = [...wrongOptions, word.tr].sort(() => Math.random() - 0.5);
+      container.innerHTML = options.map(opt => `
+        <button class="quiz-option" onclick="APP.answerQuiz(this, '${this.escapeHtml(opt)}', '${this.escapeHtml(word.tr)}', '${this.escapeHtml(word.tr)}', '${this.escapeHtml(word.note)}')">${opt}</button>
+      `).join('');
+    } else {
+      // Type 3: аудио → выбери перевод
+      questionEl.innerHTML = `<div class="quiz-sub">Послушай и выбери перевод</div><div class="quiz-word" id="quiz-word">🔊</div>`;
+      this.speak(word.tr);
+      document.getElementById('quiz-word').onclick = () => this.speak(word.tr);
+      document.getElementById('quiz-word').style.cursor = 'pointer';
+      const wrongOptions = sectionWords.filter(w => w.n !== word.n).sort(() => Math.random() - 0.5).slice(0, 3).map(w => w.ru);
+      const options = [...wrongOptions, word.ru].sort(() => Math.random() - 0.5);
+      container.innerHTML = options.map(opt => `
+        <button class="quiz-option" onclick="APP.answerQuiz(this, '${this.escapeHtml(opt)}', '${this.escapeHtml(word.ru)}', '${this.escapeHtml(word.tr)}', '${this.escapeHtml(word.note)}')">${opt}</button>
+      `).join('');
+    }
   },
 
   escapeHtml(str) {
     return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
   },
 
-  answerQuiz(btn, selected, correct) {
+  answerQuiz(btn, selected, correct, wordTr, note) {
     if (this.state.quizAnswered) return;
     this.state.quizAnswered = true;
 
@@ -443,6 +461,7 @@ const APP = {
       this.addXP(10);
       this.haptic('MEDIUM');
       if (Math.random() > 0.5) this.spawnHearts(6);
+      setTimeout(() => { this.state.quizIndex++; this.renderQuiz(); }, 1000);
     } else {
       btn.classList.add('wrong');
       this.state.quizLives--;
@@ -450,15 +469,21 @@ const APP = {
       document.querySelectorAll('.quiz-option').forEach(b => {
         if (b.textContent === correct) b.classList.add('correct');
       });
+
+      const hint = document.createElement('div');
+      hint.className = 'quiz-hint';
+      hint.innerHTML = `<strong>${wordTr}</strong> — ${correct}${note ? `<br><span class="quiz-hint-note">${note}</span>` : ''}`;
+      document.getElementById('quiz-options').after(hint);
+
+      setTimeout(() => {
+        hint.remove();
+        this.state.quizIndex++;
+        this.renderQuiz();
+      }, 2500);
     }
 
     const hearts = document.getElementById('quiz-hearts');
     hearts.innerHTML = '❤️'.repeat(this.state.quizLives) + '🖤'.repeat(3 - this.state.quizLives);
-
-    setTimeout(() => {
-      this.state.quizIndex++;
-      this.renderQuiz();
-    }, 1200);
   },
 
   showQuizResult() {
