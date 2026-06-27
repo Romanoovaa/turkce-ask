@@ -881,7 +881,7 @@ const APP = {
         </div>
         <div class="game-answer" id="trainer-answer"></div>
         <div class="game-bank" id="trainer-bank">
-          ${shuffled.map((w, idx) => `<button class="game-chip" data-w="${this.escapeHtml(w)}" onclick="APP.trainerPick(this)">${w}</button>`).join('')}
+          ${shuffled.map((w) => `<button class="game-chip" onclick="APP.trainerPick(this)">${w}</button>`).join('')}
         </div>
         <div id="trainer-next"></div>`;
     }
@@ -903,7 +903,7 @@ const APP = {
   trainerPick(btn) {
     this.haptic('LIGHT');
     btn.style.visibility = 'hidden';
-    this.trainerPicked.push(btn.dataset.w);
+    this.trainerPicked.push(btn.textContent);
     const ans = document.getElementById('trainer-answer');
     ans.innerHTML = this.trainerPicked.map(w => `<span class="game-token">${w}</span>`).join(' ');
     if (this.trainerPicked.length === this.trainerWords.length) {
