@@ -176,7 +176,6 @@ body {
   margin-top: 1rem;
   transition: transform .15s;
 }
-.onboarding .btn-white:active { transform: scale(.96); }
 .onboarding .logo { animation: float 3s ease-in-out infinite; }
 
 /* Goal / Level selection */
@@ -234,7 +233,6 @@ body {
   gap: 12px;
   transition: transform .15s;
 }
-.home-review:active { transform: scale(.97); }
 .review-icon { font-size: 1.5rem; }
 .review-info { flex: 1; }
 .review-title { font-size: .9rem; font-weight: 800; }
@@ -346,7 +344,6 @@ body {
   gap: 12px;
   transition: transform .15s;
 }
-.home-continue:active { transform: scale(.97); }
 .continue-icon { font-size: 1.5rem; }
 .continue-info { flex: 1; }
 .continue-title { font-size: .9rem; font-weight: 800; }
@@ -401,7 +398,6 @@ body {
   position: relative;
   overflow: hidden;
 }
-.section-card:active { transform: scale(.96); }
 .section-emoji { font-size: 2rem; margin-bottom: 8px; }
 .section-name { font-size: .85rem; font-weight: 800; color: var(--text); line-height: 1.3; }
 .section-count { font-size: .75rem; color: var(--text-muted); margin-top: 4px; }
@@ -459,7 +455,6 @@ body {
   transition: transform .15s;
 
 }
-.learn-card:active { transform: scale(.97); }
 .learn-card-icon { font-size: 2rem; }
 .learn-card-info { flex: 1; }
 .learn-card-title { font-size: .95rem; font-weight: 800; }
@@ -485,7 +480,6 @@ body {
   cursor: pointer;
   transition: transform .1s;
 }
-.search-item:active { transform: scale(.98); }
 .search-item-tr { font-weight: 800; color: var(--pink-dark); }
 .search-item-ru { font-size: .85rem; color: var(--text-muted); margin-top: 2px; }
 
@@ -501,7 +495,6 @@ body {
   transition: transform .15s;
   border-left: 4px solid #1565C0;
 }
-.verb-card:active { transform: scale(.97); }
 .verb-word { font-size: 1.1rem; font-weight: 900; color: #1565C0; }
 .verb-meaning { font-size: .85rem; color: var(--text-muted); margin-top: 2px; }
 .verb-example { font-size: .8rem; color: var(--text-muted); font-style: italic; margin-top: 6px; }
@@ -549,7 +542,6 @@ body {
   cursor: pointer;
   transition: transform .15s;
 }
-.grammar-card:active { transform: scale(.97); }
 .grammar-card-emoji { font-size: 2rem; }
 .grammar-card-info { flex: 1; }
 .grammar-card-title { font-size: .95rem; font-weight: 800; }
@@ -729,7 +721,6 @@ body {
   transition: transform .15s;
 }
 .sound-btn { transition: transform .15s, background .15s; }
-.sound-btn:active { transform: scale(.9); }
 .fav-btn {
   position: absolute;
   top: 16px;
@@ -742,7 +733,6 @@ body {
   transition: opacity .15s, transform .15s;
 }
 .fav-btn.active { opacity: 1; }
-.fav-btn:active { transform: scale(.85); }
 
 /* Card action buttons */
 .card-actions {
@@ -763,7 +753,6 @@ body {
   cursor: pointer;
   transition: transform .15s;
 }
-.card-action-btn:active { transform: scale(.95); }
 .btn-again {
   background: #fff3e0;
   color: #E65100;
@@ -829,7 +818,6 @@ body {
   text-align: left;
   transition: all .15s;
 }
-.quiz-option:active { transform: scale(.98); }
 .quiz-option.correct {
   background: #e8f5e9;
   border-color: var(--green);
@@ -890,7 +878,6 @@ body {
   cursor: pointer;
   transition: transform .15s;
 }
-.btn-primary:active { transform: scale(.95); }
 .btn-secondary {
   background: none;
   border: 2px solid #ddd;
@@ -969,7 +956,6 @@ body {
   width: calc(100% - 2rem);
   transition: transform .15s;
 }
-.start-quiz-btn:active { transform: scale(.97); }
 
 /* ===== FAVORITES ===== */
 .fav-list {
@@ -1136,7 +1122,6 @@ body {
   animation-delay: .3s;
   transition: transform .15s;
 }
-.streak-btn:active { transform: scale(.95); }
 
 /* ===== CONFETTI & XP ===== */
 .confetti-container {
@@ -1220,7 +1205,6 @@ body {
   cursor: pointer;
   transition: transform .15s;
 }
-.phrase-cat-card:active { transform: scale(.97); }
 .phrase-cat-emoji { font-size: 1.8rem; }
 .phrase-cat-info { flex: 1; }
 .phrase-cat-name { font-size: .95rem; font-weight: 800; }
@@ -1246,7 +1230,6 @@ body {
   cursor: pointer;
   transition: transform .15s;
 }
-.fill-promo:active { transform: scale(.97); }
 .fill-promo-icon { font-size: 2rem; }
 .fill-promo-text { flex: 1; }
 .fill-promo-title { font-size: .95rem; font-weight: 800; color: #E65100; }
@@ -1341,7 +1324,6 @@ body {
   cursor: pointer;
   transition: transform .15s;
 }
-.translate-btn:active { transform: scale(.97); }
 .translate-btn:disabled { opacity: .6; }
 
 .translate-result { padding: 0 1rem; }
@@ -1422,10 +1404,5 @@ body {
   color: #6A1B9A;
   cursor: pointer;
   transition: all .15s;
-}
-.example-chip:active {
-  background: #f3e5f5;
-  border-color: #9C27B0;
-  transform: scale(.98);
 }
 
