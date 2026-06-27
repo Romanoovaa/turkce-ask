@@ -1,11 +1,6 @@
 {
   "version": "0.0.1",
   "configurations": [
-    {
-      "name": "turkce-ask",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8080", "-d", "/Users/kseniaromanova/клодкод/turkce-ask"],
-      "port": 8080
-    }
+    { "name": "turkce-ask", "runtimeExecutable": "python3", "runtimeArgs": ["-m", "http.server", "8080", "-d", "/Users/kseniaromanova/клодкод/turkce-ask"], "port": 8080 }
   ]
 }

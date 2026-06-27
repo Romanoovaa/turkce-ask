@@ -20,6 +20,10 @@ const APP = {
     dailyBonusClaimed: localStorage.getItem('ta_dailyBonusClaimed') === 'true',
     translationCount: parseInt(localStorage.getItem('ta_translationCount') || '0'),
     srs: JSON.parse(localStorage.getItem('ta_srs') || '{}'),
+    completedMissions: JSON.parse(localStorage.getItem('ta_completedMissions') || '[]'),
+    missionStars: JSON.parse(localStorage.getItem('ta_missionStars') || '{}'),
+    readiness: parseInt(localStorage.getItem('ta_readiness') || '0'),
+    examPassed: JSON.parse(localStorage.getItem('ta_examPassed') || '[]'),
     quizWords: [],
     quizIndex: 0,
     quizLives: 3,
@@ -125,6 +129,10 @@ const APP = {
     localStorage.setItem('ta_dailyBonusClaimed', this.state.dailyBonusClaimed);
     localStorage.setItem('ta_translationCount', this.state.translationCount);
     localStorage.setItem('ta_srs', JSON.stringify(this.state.srs));
+    localStorage.setItem('ta_completedMissions', JSON.stringify(this.state.completedMissions));
+    localStorage.setItem('ta_missionStars', JSON.stringify(this.state.missionStars));
+    localStorage.setItem('ta_readiness', this.state.readiness);
+    localStorage.setItem('ta_examPassed', JSON.stringify(this.state.examPassed));
   },
 
   // ===== SPACED REPETITION =====
@@ -304,7 +312,7 @@ const APP = {
     this.state.screen = name;
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const nav = document.querySelector('.bottom-nav');
-    const showNav = ['home', 'favorites', 'translate', 'learn', 'profile', 'phrases'].includes(name);
+    const showNav = ['home', 'favorites', 'translate', 'learn', 'profile', 'phrases', 'journey'].includes(name);
     nav.classList.toggle('hidden', !showNav);
     if (showNav) {
       document.querySelectorAll('.nav-item').forEach(n => {
@@ -320,6 +328,7 @@ const APP = {
       if (name === 'favorites') this.renderFavorites();
       if (name === 'phrases') this.renderPhrases();
       if (name === 'profile') this.renderProfile();
+      if (name === 'journey') this.renderJourney();
       if (name === 'words') this.renderWords();
       if (name === 'verbs') this.renderVerbs();
       if (name === 'grammar') this.renderGrammar();
@@ -498,6 +507,440 @@ const APP = {
 
   renderWords() {
     document.getElementById('words-grid').innerHTML = this.buildSectionsHTML();
+  },
+
+  // ===== JOURNEY / MISSIONS =====
+  isMissionDone(id) { return this.state.completedMissions.includes(id); },
+
+  isMissionUnlocked(id) {
+    if (id === 1) return true;
+    return this.isMissionDone(id - 1);
+  },
+
+  renderJourney() {
+    const total = MISSIONS.length;
+    const done = this.state.completedMissions.length;
+    document.getElementById('journey-readiness-fill').style.width = this.state.readiness + '%';
+    document.getElementById('journey-readiness-pct').textContent = this.state.readiness + '%';
+    const sub = document.getElementById('journey-cta-sub');
+    if (sub) sub.textContent = `${done}/${total} миссий · ${this.getCefrLabel()}`;
+
+    const path = document.getElementById('journey-path');
+    let html = '';
+    MISSIONS.forEach((m, i) => {
+      const done = this.isMissionDone(m.id);
+      const unlocked = this.isMissionUnlocked(m.id);
+      const stars = this.state.missionStars[m.id] || 0;
+      const side = i % 2 === 0 ? 'left' : 'right';
+      const cls = done ? 'done' : unlocked ? 'active' : 'locked';
+      const starsHtml = done ? `<div class="node-stars">${'⭐'.repeat(stars)}${'·'.repeat(3 - stars)}</div>` : '';
+      html += `
+        <div class="journey-node ${side} ${cls}" ${unlocked ? `onclick="APP.openMission(${m.id})"` : ''}>
+          <div class="node-circle">${done ? '✓' : unlocked ? m.emoji : '🔒'}</div>
+          <div class="node-info">
+            <div class="node-num">Миссия ${m.id}</div>
+            <div class="node-title">${m.title}</div>
+            ${starsHtml}
+          </div>
+        </div>`;
+    });
+    // exam node
+    const allDone = MISSIONS.every(m => this.isMissionDone(m.id));
+    const examDone = this.state.examPassed.includes('A1');
+    html += `
+      <div class="journey-node exam ${examDone ? 'done' : allDone ? 'active' : 'locked'}" ${allDone && !examDone ? 'onclick="APP.startExam()"' : ''}>
+        <div class="node-circle">${examDone ? '🏆' : allDone ? '⭐' : '🔒'}</div>
+        <div class="node-info">
+          <div class="node-num">Экзамен</div>
+          <div class="node-title">Уровень A1</div>
+        </div>
+      </div>`;
+    path.innerHTML = html;
+  },
+
+  getCefrLabel() {
+    if (this.state.examPassed.includes('B2')) return 'B2';
+    if (this.state.examPassed.includes('B1')) return 'B1';
+    if (this.state.examPassed.includes('A2')) return 'A2';
+    if (this.state.examPassed.includes('A1')) return 'A2 (в процессе)';
+    return 'A1 (в процессе)';
+  },
+
+  openMission(id) {
+    const m = MISSIONS.find(x => x.id === id);
+    if (!m) return;
+    this.haptic('MEDIUM');
+    this.mission = {
+      data: m,
+      steps: this.buildMissionSteps(m),
+      stepIndex: 0,
+    };
+    this.showScreen('mission');
+    this.renderMissionStep();
+  },
+
+  buildMissionSteps(m) {
+    const steps = ['intro'];
+    if (m.wordIds && m.wordIds.length) steps.push('words');
+    if (m.verbIds && m.verbIds.length) steps.push('verbs');
+    if (m.grammarId) steps.push('grammar');
+    if (m.phraseIds && m.phraseIds.length) steps.push('phrases');
+    if (m.dialog && m.dialog.length) steps.push('dialog');
+    if (m.game) steps.push('game');
+    if (m.test && m.test.length) steps.push('test');
+    steps.push('reward');
+    return steps;
+  },
+
+  renderMissionStep() {
+    const { steps, stepIndex, data } = this.mission;
+    const step = steps[stepIndex];
+    document.getElementById('mission-progress-fill').style.width =
+      Math.round((stepIndex / steps.length) * 100) + '%';
+    const el = document.getElementById('mission-step');
+    el.scrollTop = 0;
+    const fn = {
+      intro: 'stepIntro', words: 'stepWords', verbs: 'stepVerbs', grammar: 'stepGrammar',
+      phrases: 'stepPhrases', dialog: 'stepDialog', game: 'stepGame', test: 'stepTest', reward: 'stepReward',
+    }[step];
+    el.innerHTML = this[fn](data);
+    if (step === 'dialog') this.initDialogStep();
+    if (step === 'game') this.initGameStep();
+    if (step === 'test') this.initTestStep();
+  },
+
+  missionNext() {
+    this.haptic('LIGHT');
+    this.mission.stepIndex++;
+    if (this.mission.stepIndex >= this.mission.steps.length) {
+      this.exitMission();
+      return;
+    }
+    this.renderMissionStep();
+  },
+
+  exitMission() {
+    this.mission = null;
+    this.showScreen('journey');
+  },
+
+  stepHeader(emoji, label) {
+    return `<div class="step-badge">${emoji} ${label}</div>`;
+  },
+  nextBtn(text) {
+    return `<button class="btn-primary mission-next-btn" onclick="APP.missionNext()">${text || 'Далее'}</button>`;
+  },
+
+  stepIntro(m) {
+    return `
+      <div class="step-intro">
+        <div class="step-intro-emoji">${m.emoji}</div>
+        <div class="step-intro-mission">Миссия ${m.id} · ${m.level}</div>
+        <h2>${m.title}</h2>
+        <div class="step-goal">🎯 ${m.goal}</div>
+        ${this.nextBtn('Начать миссию')}
+      </div>`;
+  },
+
+  stepWords(m) {
+    const words = m.wordIds.map(n => WORDS.find(w => w.n === n)).filter(Boolean);
+    return `
+      ${this.stepHeader('📚', 'Новые слова')}
+      <div class="step-words">
+        ${words.map(w => `
+          <div class="step-word" onclick="APP.speak('${w.tr.replace(/'/g, "\\'")}')">
+            <div class="sw-left"><div class="sw-tr">${w.tr}</div><div class="sw-ru">${w.ru}</div></div>
+            <div class="sw-sound">🔊</div>
+          </div>`).join('')}
+      </div>
+      ${this.nextBtn()}`;
+  },
+
+  stepVerbs(m) {
+    const verbs = m.verbIds.map(id => VERBS.find(v => v.id === id)).filter(Boolean);
+    return `
+      ${this.stepHeader('⚡', 'Ключевые глаголы')}
+      <div class="step-verbs">
+        ${verbs.map(v => `
+          <div class="step-verb">
+            <div class="sv-head" onclick="APP.speak('${v.tr}')"><span class="sv-tr">${v.tr}</span><span class="sv-ru">${v.ru}</span> 🔊</div>
+            <div class="sv-conj">
+              <span>ben ${v.present.ben}</span><span>sen ${v.present.sen}</span><span>o ${v.present.o}</span>
+            </div>
+            <div class="sv-ex">${v.examples[0]}</div>
+          </div>`).join('')}
+      </div>
+      ${this.nextBtn()}`;
+  },
+
+  stepGrammar(m) {
+    const g = GRAMMAR_LESSONS.find(x => x.id === m.grammarId);
+    return `
+      ${this.stepHeader('🧩', 'Грамматика')}
+      <div class="grammar-lesson-content" style="padding:0 0 1rem">${g ? g.content : ''}</div>
+      ${this.nextBtn()}`;
+  },
+
+  stepPhrases(m) {
+    const phrases = m.phraseIds.map(id => PHRASES.find(p => p.id === id)).filter(Boolean);
+    return `
+      ${this.stepHeader('💬', 'Реальные фразы')}
+      <div class="step-phrases">
+        ${phrases.map(p => `
+          <div class="step-phrase" onclick="APP.speak('${p.tr.replace(/'/g, "\\'")}')">
+            <div class="sp-tr">${p.tr}</div>
+            <div class="sp-ru">${p.ru}</div>
+          </div>`).join('')}
+      </div>
+      ${this.nextBtn()}`;
+  },
+
+  stepDialog(m) {
+    return `
+      ${this.stepHeader('🎭', 'Диалог')}
+      <div class="step-dialog" id="step-dialog-chat"></div>
+      <div id="step-dialog-choice"></div>`;
+  },
+
+  initDialogStep() {
+    const m = this.mission.data;
+    const chat = document.getElementById('step-dialog-chat');
+    const choiceEl = document.getElementById('step-dialog-choice');
+    let i = 0;
+    const showNext = () => {
+      if (i >= m.dialog.length) {
+        choiceEl.innerHTML = this.nextBtn();
+        return;
+      }
+      const turn = m.dialog[i];
+      if (turn.s === 'choose') {
+        choiceEl.innerHTML = `
+          <div class="dialog-q">${turn.q}</div>
+          ${turn.options.map((o, idx) => `
+            <button class="dialog-option" onclick="APP.dialogAnswer(this, ${o.correct})">
+              <div class="do-tr">${o.tr}</div><div class="do-ru">${o.ru}</div>
+            </button>`).join('')}`;
+        return;
+      }
+      const bubble = document.createElement('div');
+      bubble.className = 'chat-bubble ' + (turn.s === 'he' ? 'he' : 'you');
+      bubble.innerHTML = `<div class="cb-tr">${turn.tr}</div><div class="cb-ru">${turn.ru}</div>`;
+      bubble.onclick = () => this.speak(turn.tr);
+      chat.appendChild(bubble);
+      i++;
+      setTimeout(showNext, turn.s === 'he' ? 700 : 500);
+    };
+    showNext();
+  },
+
+  dialogAnswer(btn, correct) {
+    if (correct) {
+      btn.classList.add('correct');
+      this.haptic('MEDIUM'); this.playSound('correct');
+      document.querySelectorAll('.dialog-option').forEach(b => b.style.pointerEvents = 'none');
+      setTimeout(() => { document.getElementById('step-dialog-choice').innerHTML = this.nextBtn(); }, 700);
+    } else {
+      btn.classList.add('wrong');
+      this.haptic('HEAVY'); this.playSound('wrong');
+      setTimeout(() => btn.classList.remove('wrong'), 500);
+    }
+  },
+
+  stepGame(m) {
+    return `
+      ${this.stepHeader('🎮', 'Собери фразу')}
+      <div class="game-prompt">${m.game.ru}</div>
+      <div class="game-answer" id="game-answer"></div>
+      <div class="game-bank" id="game-bank"></div>
+      <div id="game-next"></div>`;
+  },
+
+  initGameStep() {
+    const m = this.mission.data;
+    this.gameWords = m.game.tr.split(' ');
+    this.gamePicked = [];
+    const bank = document.getElementById('game-bank');
+    const shuffled = [...this.gameWords].map((w, i) => ({ w, i })).sort(() => Math.random() - 0.5);
+    bank.innerHTML = shuffled.map(o => `<button class="game-chip" data-i="${o.i}" onclick="APP.gamePick(this)">${o.w}</button>`).join('');
+  },
+
+  gamePick(btn) {
+    this.haptic('LIGHT');
+    btn.style.visibility = 'hidden';
+    this.gamePicked.push(btn.textContent);
+    const ans = document.getElementById('game-answer');
+    ans.innerHTML = this.gamePicked.map(w => `<span class="game-token">${w}</span>`).join(' ');
+    if (this.gamePicked.length === this.gameWords.length) {
+      const correct = this.gamePicked.join(' ') === this.gameWords.join(' ');
+      if (correct) {
+        ans.classList.add('game-correct');
+        this.playSound('correct'); this.haptic('MEDIUM');
+        document.getElementById('game-next').innerHTML = this.nextBtn('Отлично! Далее');
+      } else {
+        ans.classList.add('game-wrong');
+        this.playSound('wrong'); this.haptic('HEAVY');
+        document.getElementById('game-next').innerHTML =
+          `<button class="btn-secondary" onclick="APP.initGameStep();document.getElementById('game-answer').className='game-answer';document.getElementById('game-answer').innerHTML='';document.getElementById('game-next').innerHTML=''">Попробовать снова</button>`;
+      }
+    }
+  },
+
+  stepTest(m) {
+    return `
+      ${this.stepHeader('📝', 'Мини-тест')}
+      <div class="mission-test-counter" id="mtest-counter"></div>
+      <div class="quiz-question" id="mtest-q"></div>
+      <div class="quiz-options" id="mtest-opts"></div>`;
+  },
+
+  initTestStep() {
+    this.mtest = { i: 0, correct: 0, answered: false };
+    this.renderMissionTestQ();
+  },
+
+  renderMissionTestQ() {
+    const test = this.mission.data.test;
+    if (this.mtest.i >= test.length) {
+      this.mission.testScore = this.mtest.correct / test.length;
+      this.missionNext();
+      return;
+    }
+    const q = test[this.mtest.i];
+    this.mtest.answered = false;
+    document.getElementById('mtest-counter').textContent = `${this.mtest.i + 1} / ${test.length}`;
+    document.getElementById('mtest-q').innerHTML = `<div class="quiz-word">${q.q}</div>`;
+    const opts = [...q.opts].sort(() => Math.random() - 0.5);
+    document.getElementById('mtest-opts').innerHTML = opts.map(o =>
+      `<button class="quiz-option" onclick="APP.answerMissionTest(this, '${this.escapeHtml(o)}', '${this.escapeHtml(q.a)}')">${o}</button>`
+    ).join('');
+  },
+
+  answerMissionTest(btn, selected, correct) {
+    if (this.mtest.answered) return;
+    this.mtest.answered = true;
+    document.querySelectorAll('#mtest-opts .quiz-option').forEach(b => b.classList.add('disabled'));
+    if (selected === correct) {
+      btn.classList.add('correct'); this.mtest.correct++;
+      this.haptic('MEDIUM'); this.playSound('correct');
+    } else {
+      btn.classList.add('wrong'); this.haptic('HEAVY'); this.playSound('wrong');
+      document.querySelectorAll('#mtest-opts .quiz-option').forEach(b => {
+        if (b.textContent === correct) b.classList.add('correct');
+      });
+    }
+    setTimeout(() => { this.mtest.i++; this.renderMissionTestQ(); }, 1000);
+  },
+
+  stepReward(m) {
+    // compute stars from test score
+    const score = this.mission.testScore != null ? this.mission.testScore : 1;
+    let stars = 1;
+    if (score >= 0.6) stars = 2;
+    if (score >= 0.9) stars = 3;
+    this.completeMission(m, stars);
+    return `
+      <div class="step-reward">
+        <div class="reward-emoji">${m.emoji}</div>
+        <h2>Миссия пройдена!</h2>
+        <div class="reward-stars">${'⭐'.repeat(stars)}${'<span style="opacity:.25">⭐</span>'.repeat(3 - stars)}</div>
+        <div class="reward-row">
+          <div class="reward-item"><div class="ri-num">+${m.reward.xp}</div><div class="ri-label">XP</div></div>
+          <div class="reward-item"><div class="ri-num">+${m.reward.readiness}%</div><div class="ri-label">готовность</div></div>
+        </div>
+        <div class="reward-badge">Новый значок: ${m.reward.badge}</div>
+        <button class="btn-primary" onclick="APP.exitMission()">Продолжить путь</button>
+      </div>`;
+  },
+
+  completeMission(m, stars) {
+    if (this.isMissionDone(m.id)) {
+      // already done — only update stars if better
+      if ((this.state.missionStars[m.id] || 0) < stars) this.state.missionStars[m.id] = stars;
+      this.save();
+      return;
+    }
+    this.state.completedMissions.push(m.id);
+    this.state.missionStars[m.id] = stars;
+    this.state.readiness = Math.min(100, this.state.readiness + m.reward.readiness);
+    // promote referenced words into SRS / learned
+    (m.wordIds || []).forEach(n => {
+      if (!this.state.learned.includes(n)) this.state.learned.push(n);
+      this.srsPromote(n);
+    });
+    this.addXP(m.reward.xp);
+    this.save();
+    this.spawnConfetti(40);
+    this.playSound('levelup');
+  },
+
+  // ===== EXAM =====
+  startExam() {
+    this.haptic('MEDIUM');
+    this.exam = { i: 0, correct: 0, answered: false, data: A1_EXAM };
+    this.showScreen('mission');
+    document.getElementById('mission-progress-fill').style.width = '0%';
+    this.renderExamQ();
+  },
+
+  renderExamQ() {
+    const ex = this.exam.data;
+    const el = document.getElementById('mission-step');
+    if (this.exam.i >= ex.questions.length) {
+      this.finishExam();
+      return;
+    }
+    document.getElementById('mission-progress-fill').style.width =
+      Math.round((this.exam.i / ex.questions.length) * 100) + '%';
+    const q = ex.questions[this.exam.i];
+    this.exam.answered = false;
+    const opts = [...q.opts].sort(() => Math.random() - 0.5);
+    el.scrollTop = 0;
+    el.innerHTML = `
+      ${this.stepHeader('⭐', 'Экзамен A1 · ' + q.sec)}
+      <div class="mission-test-counter">${this.exam.i + 1} / ${ex.questions.length}</div>
+      <div class="quiz-question"><div class="quiz-word">${q.q}</div></div>
+      <div class="quiz-options">
+        ${opts.map(o => `<button class="quiz-option" onclick="APP.answerExam(this, '${this.escapeHtml(o)}', '${this.escapeHtml(q.a)}')">${o}</button>`).join('')}
+      </div>`;
+  },
+
+  answerExam(btn, selected, correct) {
+    if (this.exam.answered) return;
+    this.exam.answered = true;
+    document.querySelectorAll('.quiz-option').forEach(b => b.classList.add('disabled'));
+    if (selected === correct) {
+      btn.classList.add('correct'); this.exam.correct++;
+      this.haptic('MEDIUM'); this.playSound('correct');
+    } else {
+      btn.classList.add('wrong'); this.haptic('HEAVY'); this.playSound('wrong');
+      document.querySelectorAll('.quiz-option').forEach(b => { if (b.textContent === correct) b.classList.add('correct'); });
+    }
+    setTimeout(() => { this.exam.i++; this.renderExamQ(); }, 1000);
+  },
+
+  finishExam() {
+    const ex = this.exam.data;
+    const pct = Math.round(this.exam.correct / ex.questions.length * 100);
+    const passed = pct >= ex.pass;
+    const el = document.getElementById('mission-step');
+    document.getElementById('mission-progress-fill').style.width = '100%';
+    if (passed && !this.state.examPassed.includes('A1')) {
+      this.state.examPassed.push('A1');
+      this.addXP(200);
+      this.save();
+      this.spawnConfetti(60);
+      this.playSound('levelup');
+    }
+    el.innerHTML = `
+      <div class="step-reward">
+        <div class="reward-emoji">${passed ? '🏆' : '💪'}</div>
+        <h2>${passed ? 'Уровень A1 сдан!' : 'Почти получилось'}</h2>
+        <div class="exam-score">${this.exam.correct} / ${ex.questions.length} · ${pct}%</div>
+        <div class="exam-msg">${passed
+          ? 'Поздравляю! Ты официально на уровне A1 и готова к A2 🇹🇷'
+          : `Нужно ${ex.pass}%. Повтори миссии и попробуй снова — ты близко!`}</div>
+        <button class="btn-primary" onclick="APP.exam=null;APP.showScreen('journey')">${passed ? 'Продолжить' : 'Вернуться к миссиям'}</button>
+      </div>`;
   },
 
   // ===== CARDS =====
@@ -959,10 +1402,12 @@ const APP = {
       : `${xp} XP — Максимальный уровень!`;
 
     document.getElementById('profile-stats').innerHTML = `
+      <div class="pstat"><div class="pstat-num">${this.getCefrLabel().split(' ')[0]}</div><div class="pstat-label">🎓 Уровень CEFR</div></div>
+      <div class="pstat"><div class="pstat-num">${this.state.readiness}%</div><div class="pstat-label">🇹🇷 Готовность</div></div>
+      <div class="pstat"><div class="pstat-num">${this.state.completedMissions.length}/${MISSIONS.length}</div><div class="pstat-label">🗺️ Миссий</div></div>
       <div class="pstat"><div class="pstat-num">${this.state.streak}</div><div class="pstat-label">🔥 Дней подряд</div></div>
-      <div class="pstat"><div class="pstat-num">${this.state.learned.length}</div><div class="pstat-label">📚 Слов выучено</div></div>
+      <div class="pstat"><div class="pstat-num">${this.state.learned.length}</div><div class="pstat-label">📚 Слов</div></div>
       <div class="pstat"><div class="pstat-num">${xp}</div><div class="pstat-label">⭐ XP</div></div>
-      <div class="pstat"><div class="pstat-num">${lvl.id}</div><div class="pstat-label">${lvl.emoji} Уровень</div></div>
     `;
 
     this.checkTimeAchievements();

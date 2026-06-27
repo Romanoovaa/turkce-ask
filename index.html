@@ -119,6 +119,14 @@
   </div>
   <div id="search-results" class="search-results" style="display:none"></div>
   <div id="learn-menu" class="learn-menu">
+    <div class="journey-cta" onclick="APP.showScreen('journey')">
+      <div class="journey-cta-emoji">🗺️</div>
+      <div class="journey-cta-info">
+        <div class="journey-cta-title">Твой путь</div>
+        <div class="journey-cta-sub" id="journey-cta-sub">Миссии по реальным ситуациям · A1</div>
+      </div>
+      <div class="journey-cta-arrow">→</div>
+    </div>
     <div class="learn-card" onclick="APP.showScreen('words')">
       <div class="learn-card-icon">🃏</div>
       <div class="learn-card-info">
@@ -160,6 +168,29 @@
       <div class="learn-card-arrow">→</div>
     </div>
   </div>
+</div>
+
+<!-- Journey map -->
+<div class="screen nav-screen" id="screen-journey">
+  <div class="journey-header">
+    <div class="journey-level" id="journey-level">A1 · İlk Adımlar</div>
+    <h1>Твой путь 🇹🇷</h1>
+    <div class="journey-readiness">
+      <div class="jr-label">Готовность к жизни в Турции</div>
+      <div class="jr-bar"><div class="jr-fill" id="journey-readiness-fill"></div></div>
+      <div class="jr-pct" id="journey-readiness-pct">0%</div>
+    </div>
+  </div>
+  <div class="journey-path" id="journey-path"></div>
+</div>
+
+<!-- Mission runner -->
+<div class="screen" id="screen-mission" style="background:var(--bg)">
+  <div class="mission-top">
+    <button class="back-btn" onclick="APP.exitMission()">✕</button>
+    <div class="mission-progress-bar"><div class="mission-progress-fill" id="mission-progress-fill"></div></div>
+  </div>
+  <div class="mission-step" id="mission-step"></div>
 </div>
 
 <!-- Words categories -->
@@ -389,6 +420,7 @@
 <script src="js/phrases.js"></script>
 <script src="js/gamification.js"></script>
 <script src="js/verbs.js"></script>
+<script src="js/missions.js"></script>
 <script src="js/app.js"></script>
 <script>
 // Service Worker for offline
