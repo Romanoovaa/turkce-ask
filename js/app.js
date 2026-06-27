@@ -312,9 +312,6 @@ const APP = {
       });
     }
 
-    const isOnboarding = name.startsWith('onboarding');
-    document.body.style.background = isOnboarding ? '#E91E63' : '#FFFFFF';
-    document.documentElement.style.background = isOnboarding ? '#E91E63' : '#FFFFFF';
 
     const el = document.getElementById('screen-' + name);
     if (el) {

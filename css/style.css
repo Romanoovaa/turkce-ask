@@ -88,14 +88,22 @@ body {
 .onboarding {
   background: linear-gradient(160deg, #E91E63, #FF7043);
   color: white;
-  padding: 2rem 1.5rem 1.5rem;
-  padding-top: calc(2rem + env(safe-area-inset-top, 0px));
-  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: auto;
   align-items: center;
   justify-content: center;
   text-align: center;
   gap: 1rem;
+  padding: 1.5rem;
+  padding-top: calc(1.5rem + env(safe-area-inset-top, 20px));
+  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 20px));
   overflow-y: auto;
+  overscroll-behavior: none;
+  z-index: 200;
 }
 .onboarding .logo { font-size: 2.5rem; }
 .onboarding h1 { font-size: 1.8rem; font-weight: 900; }
