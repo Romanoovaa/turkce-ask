@@ -663,6 +663,27 @@ body {
 .journey-cta-arrow { font-size: 1.3rem; opacity: .8; }
 
 .journey-path { padding: 1.5rem 1rem 1rem; position: relative; }
+.journey-level-divider {
+  text-align: center;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: .5rem 0 1.25rem;
+  position: relative;
+}
+.journey-level-divider::before,
+.journey-level-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 22%;
+  height: 1px;
+  background: rgba(0,0,0,0.1);
+}
+.journey-level-divider::before { left: 4%; }
+.journey-level-divider::after { right: 4%; }
 .journey-node {
   display: flex;
   align-items: center;

@@ -246,4 +246,55 @@ const GRAMMAR_LESSONS = [
 </div>
 <p class="grammar-tip">💡 «Anlamıyorum» — запомни это первым! Самая нужная фраза для начинающих.</p>`,
   },
+  {
+    id: 6, title: 'Прошедшее время', emoji: '⏪', level: 'A2',
+    desc: 'Рассказать о том, что было',
+    content: `<h3>Прошедшее время (-dı/-di/-du/-dü)</h3>
+<p>Чтобы рассказать о вчерашнем дне, добавь к глаголу <strong>-dı</strong> и личное окончание.</p>
+<div class="grammar-table">
+<div class="grammar-row"><span class="g-letter">Ben</span><span class="g-sound">geldim</span><span class="g-example">Я пришёл/пришла</span></div>
+<div class="grammar-row"><span class="g-letter">Sen</span><span class="g-sound">geldin</span><span class="g-example">Ты пришёл</span></div>
+<div class="grammar-row"><span class="g-letter">O</span><span class="g-sound">geldi</span><span class="g-example">Он/она пришёл</span></div>
+<div class="grammar-row"><span class="g-letter">Biz</span><span class="g-sound">geldik</span><span class="g-example">Мы пришли</span></div>
+</div>
+<p class="grammar-box">После глухих согласных (p,ç,t,k,s,ş,h,f) → -tı: «gittim» (я пошёл), «içtim» (я выпил).</p>
+<p class="grammar-tip">💡 «Çok güzel olmuş» — «получилось очень вкусно». Скажи это его маме после еды!</p>`,
+  },
+  {
+    id: 7, title: 'Падеж направления (-e/-a)', emoji: '➡️', level: 'A2',
+    desc: 'Куда? К кому?',
+    content: `<h3>Куда идём? (-e / -a)</h3>
+<p>Чтобы сказать «куда», добавь к слову <strong>-e</strong> (после мягких) или <strong>-a</strong> (после твёрдых).</p>
+<div class="grammar-table">
+<div class="grammar-row"><span class="g-letter">ev → eve</span><span class="g-sound">домой</span><span class="g-example">Eve gidiyorum</span></div>
+<div class="grammar-row"><span class="g-letter">okul → okula</span><span class="g-sound">в школу</span><span class="g-example">Okula gidiyorum</span></div>
+<div class="grammar-row"><span class="g-letter">İstanbul → İstanbul'a</span><span class="g-sound">в Стамбул</span><span class="g-example">İstanbul'a gidelim</span></div>
+</div>
+<p class="grammar-tip">💡 «Annene gidelim» — поедем к твоей маме. Падеж направления нужен постоянно!</p>`,
+  },
+  {
+    id: 8, title: 'Падеж места (-de/-da)', emoji: '📍', level: 'A2',
+    desc: 'Где? У кого?',
+    content: `<h3>Где находимся? (-de / -da)</h3>
+<p>Чтобы сказать «где», добавь <strong>-de</strong> или <strong>-da</strong>.</p>
+<div class="grammar-table">
+<div class="grammar-row"><span class="g-letter">ev → evde</span><span class="g-sound">дома</span><span class="g-example">Evdeyim — Я дома</span></div>
+<div class="grammar-row"><span class="g-letter">iş → işte</span><span class="g-sound">на работе</span><span class="g-example">İşteyim — Я на работе</span></div>
+<div class="grammar-row"><span class="g-letter">kafe → kafede</span><span class="g-sound">в кафе</span><span class="g-example">Kafedeyim</span></div>
+</div>
+<p class="grammar-box">После глухих согласных → -te/-ta: «işte» (на работе).</p>
+<p class="grammar-tip">💡 «Neredesin?» — «Где ты?». Ответ: «Evdeyim» — «Я дома».</p>`,
+  },
+  {
+    id: 9, title: 'Принадлежность', emoji: '🫶', level: 'A2',
+    desc: 'Мой, твой, его',
+    content: `<h3>Чьё это? (-im / -in / -i)</h3>
+<p>Принадлежность выражается окончанием на самом предмете.</p>
+<div class="grammar-table">
+<div class="grammar-row"><span class="g-letter">anne → annem</span><span class="g-sound">моя мама</span><span class="g-example">Annem geldi</span></div>
+<div class="grammar-row"><span class="g-letter">eş → eşim</span><span class="g-sound">мой супруг</span><span class="g-example">Eşim çalışıyor</span></div>
+<div class="grammar-row"><span class="g-letter">ev → evin</span><span class="g-sound">твой дом</span><span class="g-example">Evin güzel</span></div>
+</div>
+<p class="grammar-tip">💡 «Aşkım», «canım», «hayatım» — это всё «-im»: любовь МОЯ, душа МОЯ. Ты уже знаешь принадлежность!</p>`,
+  },
 ];

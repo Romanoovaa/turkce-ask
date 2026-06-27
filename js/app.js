@@ -512,50 +512,68 @@ const APP = {
   // ===== JOURNEY / MISSIONS =====
   isMissionDone(id) { return this.state.completedMissions.includes(id); },
 
+  LEVELS: [
+    { id: 'A1', name: 'İlk Adımlar' },
+    { id: 'A2', name: 'Daha Yakın' },
+  ],
+
   isMissionUnlocked(id) {
-    if (id === 1) return true;
-    return this.isMissionDone(id - 1);
+    const idx = MISSIONS.findIndex(m => m.id === id);
+    if (idx <= 0) return true;
+    const prev = MISSIONS[idx - 1];
+    const cur = MISSIONS[idx];
+    if (prev.level !== cur.level) {
+      // первая миссия нового уровня — нужен сданный экзамен предыдущего
+      return this.state.examPassed.includes(prev.level);
+    }
+    return this.isMissionDone(prev.id);
   },
 
   renderJourney() {
     const total = MISSIONS.length;
-    const done = this.state.completedMissions.length;
+    const doneCount = this.state.completedMissions.length;
     document.getElementById('journey-readiness-fill').style.width = this.state.readiness + '%';
     document.getElementById('journey-readiness-pct').textContent = this.state.readiness + '%';
+    document.getElementById('journey-level').textContent = `${this.getCefrLabel()}`;
     const sub = document.getElementById('journey-cta-sub');
-    if (sub) sub.textContent = `${done}/${total} миссий · ${this.getCefrLabel()}`;
+    if (sub) sub.textContent = `${doneCount}/${total} миссий · ${this.getCefrLabel()}`;
 
-    const path = document.getElementById('journey-path');
     let html = '';
-    MISSIONS.forEach((m, i) => {
-      const done = this.isMissionDone(m.id);
-      const unlocked = this.isMissionUnlocked(m.id);
-      const stars = this.state.missionStars[m.id] || 0;
-      const side = i % 2 === 0 ? 'left' : 'right';
-      const cls = done ? 'done' : unlocked ? 'active' : 'locked';
-      const starsHtml = done ? `<div class="node-stars">${'⭐'.repeat(stars)}${'·'.repeat(3 - stars)}</div>` : '';
+    let side = 0;
+    this.LEVELS.forEach(lvl => {
+      const ms = MISSIONS.filter(m => m.level === lvl.id);
+      html += `<div class="journey-level-divider">${lvl.id} · ${lvl.name}</div>`;
+      ms.forEach(m => {
+        const done = this.isMissionDone(m.id);
+        const unlocked = this.isMissionUnlocked(m.id);
+        const stars = this.state.missionStars[m.id] || 0;
+        const cls = done ? 'done' : unlocked ? 'active' : 'locked';
+        const sideCls = side % 2 === 0 ? 'left' : 'right';
+        side++;
+        const starsHtml = done ? `<div class="node-stars">${'⭐'.repeat(stars)}${'·'.repeat(3 - stars)}</div>` : '';
+        html += `
+          <div class="journey-node ${sideCls} ${cls}" ${unlocked ? `onclick="APP.openMission(${m.id})"` : ''}>
+            <div class="node-circle">${done ? '✓' : unlocked ? m.emoji : '🔒'}</div>
+            <div class="node-info">
+              <div class="node-num">Миссия ${m.id}</div>
+              <div class="node-title">${m.title}</div>
+              ${starsHtml}
+            </div>
+          </div>`;
+      });
+      const allDone = ms.every(m => this.isMissionDone(m.id));
+      const examDone = this.state.examPassed.includes(lvl.id);
       html += `
-        <div class="journey-node ${side} ${cls}" ${unlocked ? `onclick="APP.openMission(${m.id})"` : ''}>
-          <div class="node-circle">${done ? '✓' : unlocked ? m.emoji : '🔒'}</div>
+        <div class="journey-node exam ${examDone ? 'done' : allDone ? 'active' : 'locked'}" ${allDone && !examDone ? `onclick="APP.startExam('${lvl.id}')"` : ''}>
+          <div class="node-circle">${examDone ? '🏆' : allDone ? '⭐' : '🔒'}</div>
           <div class="node-info">
-            <div class="node-num">Миссия ${m.id}</div>
-            <div class="node-title">${m.title}</div>
-            ${starsHtml}
+            <div class="node-num">Экзамен</div>
+            <div class="node-title">Уровень ${lvl.id}</div>
           </div>
         </div>`;
+      side = 0;
     });
-    // exam node
-    const allDone = MISSIONS.every(m => this.isMissionDone(m.id));
-    const examDone = this.state.examPassed.includes('A1');
-    html += `
-      <div class="journey-node exam ${examDone ? 'done' : allDone ? 'active' : 'locked'}" ${allDone && !examDone ? 'onclick="APP.startExam()"' : ''}>
-        <div class="node-circle">${examDone ? '🏆' : allDone ? '⭐' : '🔒'}</div>
-        <div class="node-info">
-          <div class="node-num">Экзамен</div>
-          <div class="node-title">Уровень A1</div>
-        </div>
-      </div>`;
-    path.innerHTML = html;
+    document.getElementById('journey-path').innerHTML = html;
   },
 
   getCefrLabel() {
@@ -874,9 +892,10 @@ const APP = {
   },
 
   // ===== EXAM =====
-  startExam() {
+  startExam(level) {
+    level = level || 'A1';
     this.haptic('MEDIUM');
-    this.exam = { i: 0, correct: 0, answered: false, data: A1_EXAM };
+    this.exam = { i: 0, correct: 0, answered: false, data: EXAMS[level], level };
     this.showScreen('mission');
     document.getElementById('mission-progress-fill').style.width = '0%';
     this.renderExamQ();
@@ -896,7 +915,7 @@ const APP = {
     const opts = [...q.opts].sort(() => Math.random() - 0.5);
     el.scrollTop = 0;
     el.innerHTML = `
-      ${this.stepHeader('⭐', 'Экзамен A1 · ' + q.sec)}
+      ${this.stepHeader('⭐', 'Экзамен ' + this.exam.level + ' · ' + q.sec)}
       <div class="mission-test-counter">${this.exam.i + 1} / ${ex.questions.length}</div>
       <div class="quiz-question"><div class="quiz-word">${q.q}</div></div>
       <div class="quiz-options">
@@ -920,12 +939,14 @@ const APP = {
 
   finishExam() {
     const ex = this.exam.data;
+    const lvl = this.exam.level;
+    const next = { A1: 'A2', A2: 'B1' }[lvl] || '';
     const pct = Math.round(this.exam.correct / ex.questions.length * 100);
     const passed = pct >= ex.pass;
     const el = document.getElementById('mission-step');
     document.getElementById('mission-progress-fill').style.width = '100%';
-    if (passed && !this.state.examPassed.includes('A1')) {
-      this.state.examPassed.push('A1');
+    if (passed && !this.state.examPassed.includes(lvl)) {
+      this.state.examPassed.push(lvl);
       this.addXP(200);
       this.save();
       this.spawnConfetti(60);
@@ -934,10 +955,10 @@ const APP = {
     el.innerHTML = `
       <div class="step-reward">
         <div class="reward-emoji">${passed ? '🏆' : '💪'}</div>
-        <h2>${passed ? 'Уровень A1 сдан!' : 'Почти получилось'}</h2>
+        <h2>${passed ? `Уровень ${lvl} сдан!` : 'Почти получилось'}</h2>
         <div class="exam-score">${this.exam.correct} / ${ex.questions.length} · ${pct}%</div>
         <div class="exam-msg">${passed
-          ? 'Поздравляю! Ты официально на уровне A1 и готова к A2 🇹🇷'
+          ? `Поздравляю! Ты официально на уровне ${lvl}${next ? ` и готова к ${next}` : ''} 🇹🇷`
           : `Нужно ${ex.pass}%. Повтори миссии и попробуй снова — ты близко!`}</div>
         <button class="btn-primary" onclick="APP.exam=null;APP.showScreen('journey')">${passed ? 'Продолжить' : 'Вернуться к миссиям'}</button>
       </div>`;
