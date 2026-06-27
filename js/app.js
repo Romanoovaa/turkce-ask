@@ -656,9 +656,15 @@ const APP = {
     return `
       <div class="step-intro">
         <div class="step-intro-emoji">${m.emoji}</div>
-        <div class="step-intro-mission">Миссия ${m.id} · ${m.level}</div>
+        <div class="step-intro-mission">Миссия ${m.id} · ${m.level}${m.grammar_topic ? ' · ' + m.grammar_topic : ''}</div>
         <h2>${m.title}</h2>
         <div class="step-goal">🎯 ${m.goal}</div>
+        ${m.hook ? `
+          <div class="step-hook" onclick="APP.speak('${m.hook.phrase_tr.replace(/'/g, "\\'")}')">
+            <div class="hook-phrase">${m.hook.phrase_tr} 🔊</div>
+            <div class="hook-ru">${m.hook.phrase_ru}</div>
+            <div class="hook-prompt">${m.hook.prompt}</div>
+          </div>` : ''}
         ${this.nextBtn('Начать миссию')}
       </div>`;
   },
@@ -695,6 +701,20 @@ const APP = {
   },
 
   stepGrammar(m) {
+    if (m.explanation) {
+      const e = m.explanation;
+      return `
+        ${this.stepHeader('🧩', m.grammar_topic || 'Грамматика')}
+        <div class="grammar-box" style="margin-top:0">${e.rule}</div>
+        <div class="grammar-table">
+          ${e.examples.map(ex => `
+            <div class="grammar-row">
+              <span class="g-letter">${ex.tr}</span>
+              <span class="g-example">${ex.ru}</span>
+            </div>`).join('')}
+        </div>
+        ${this.nextBtn()}`;
+    }
     const g = GRAMMAR_LESSONS.find(x => x.id === m.grammarId);
     return `
       ${this.stepHeader('🧩', 'Грамматика')}
@@ -829,12 +849,23 @@ const APP = {
     this.trainer.answered = false;
     document.getElementById('trainer-counter').textContent = `${this.trainer.i + 1} / ${ex.length}`;
     const body = document.getElementById('trainer-body');
-    if (e.type === 'fill_blank') {
+    if (e.type === 'recognize') {
       const opts = [...e.options].sort(() => Math.random() - 0.5);
       body.innerHTML = `
         <div class="trainer-q">
-          <div class="trainer-sentence">${e.sentence_tr.replace('_____', '<span class="trainer-blank">?</span>')}</div>
-          <div class="trainer-ru">${e.sentence_ru}</div>
+          <div class="trainer-sentence" style="font-size:1.1rem">${e.question_ru}</div>
+        </div>
+        <div class="quiz-options">
+          ${opts.map(o => `<button class="quiz-option" onclick="APP.answerTrainerFill(this, '${this.escapeHtml(o)}', '${this.escapeHtml(e.correct)}')">${o}</button>`).join('')}
+        </div>`;
+    } else if (e.type === 'fill_blank') {
+      const opts = [...e.options].sort(() => Math.random() - 0.5);
+      const sentence = (e.sentence_tr || '').replace(/_+/g, '<span class="trainer-blank">?</span>');
+      body.innerHTML = `
+        <div class="trainer-q">
+          ${e.question_ru ? `<div class="trainer-hint" style="margin-bottom:8px">${e.question_ru}</div>` : ''}
+          <div class="trainer-sentence">${sentence}</div>
+          ${e.sentence_ru ? `<div class="trainer-ru">${e.sentence_ru}</div>` : ''}
         </div>
         <div class="quiz-options">
           ${opts.map(o => `<button class="quiz-option" onclick="APP.answerTrainerFill(this, '${this.escapeHtml(o)}', '${this.escapeHtml(e.correct)}')">${o}</button>`).join('')}
@@ -952,6 +983,12 @@ const APP = {
           <div class="reward-item"><div class="ri-num">+${m.reward.readiness}%</div><div class="ri-label">готовность</div></div>
         </div>
         <div class="reward-badge">Новый значок: ${m.reward.badge}</div>
+        ${m.finale ? `
+          <div class="step-finale" onclick="APP.speak('${m.finale.phrase_tr.replace(/'/g, "\\'")}')">
+            <div class="finale-phrase">${m.finale.phrase_tr} 🔊</div>
+            <div class="finale-ru">${m.finale.phrase_ru}</div>
+            <div class="finale-prompt">${m.finale.prompt}</div>
+          </div>` : ''}
         <button class="btn-primary" onclick="APP.exitMission()">Продолжить путь</button>
       </div>`;
   },

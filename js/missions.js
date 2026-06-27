@@ -687,3 +687,236 @@ const A2_EXAM = {
 };
 
 const EXAMS = { A1: A1_EXAM, A2: A2_EXAM };
+
+// ===== Расширенный грамматический контент A1 (hook → explanation → exercises → finale) =====
+const A1_CONTENT = [
+  {
+    mission: 1, grammar_topic: 'Алфавит и произношение',
+    hook: { phrase_tr: 'Merhaba, ben Ksenia.', phrase_ru: 'Привет, я Ксения.', prompt: 'К концу этой миссии ты сможешь прочитать это вслух сама.' },
+    explanation: {
+      rule: 'В турецком алфавите 29 букв. 8 из них отличаются: Ç/ç, Ş/ş, Ğ/ğ, İ/i, I/ı, Ö/ö, Ü/ü, G/g. Каждая буква читается всегда одинаково — никаких исключений.',
+      examples: [
+        { tr: 'Ç → [ч]', ru: 'çay = чай' }, { tr: 'Ş → [ш]', ru: 'şeker = сахар' },
+        { tr: 'Ğ → тянет гласную', ru: 'dağ = даа (гора)' }, { tr: 'İ → [и]', ru: 'istanbul' },
+        { tr: 'Ü → [ю]', ru: 'üzüm = виноград' },
+      ],
+    },
+    exercises: [
+      { type: 'recognize', question_ru: 'Как читается буква Ş?', options: ['с', 'ш', 'щ'], correct: 'ш' },
+      { type: 'recognize', question_ru: 'Какое слово означает «чай»?', options: ['şeker', 'çay', 'dağ'], correct: 'çay' },
+      { type: 'fill_blank', question_ru: 'Допиши букву: «ча_» = çay', sentence_tr: '_ay', options: ['C', 'Ç', 'S'], correct: 'Ç' },
+      { type: 'word_order', words: ['ben', 'Merhaba,', 'Ksenia.'], correct: 'Merhaba, ben Ksenia.', translation: 'Привет, я Ксения.' },
+    ],
+    finale: { phrase_tr: 'Merhaba, ben Ksenia.', phrase_ru: 'Привет, я Ксения.', prompt: 'Ты только что прочитала свою первую турецкую фразу. Буквы больше не чужие.' },
+  },
+  {
+    mission: 2, grammar_topic: 'Личные местоимения',
+    hook: { phrase_tr: 'Ben Türkçe öğreniyorum.', phrase_ru: 'Я учу турецкий.', prompt: 'Одно слово в этой фразе ты уже знаешь. Угадаешь какое?' },
+    explanation: {
+      rule: 'В турецком 6 личных местоимений. Они часто опускаются в речи, но важно их знать — они основа любого предложения.',
+      examples: [
+        { tr: 'Ben', ru: 'Я' }, { tr: 'Sen', ru: 'Ты' }, { tr: 'O', ru: 'Он / Она / Оно' },
+        { tr: 'Biz', ru: 'Мы' }, { tr: 'Siz', ru: 'Вы (вежливо / мн.ч.)' }, { tr: 'Onlar', ru: 'Они' },
+      ],
+    },
+    exercises: [
+      { type: 'recognize', question_ru: 'Как по-турецки «она»?', options: ['Ben', 'Sen', 'O'], correct: 'O' },
+      { type: 'recognize', question_ru: 'Что означает «Siz»?', options: ['Мы', 'Вы', 'Они'], correct: 'Вы' },
+      { type: 'fill_blank', sentence_tr: '_____ Türkçe öğreniyorum.', sentence_ru: 'Я учу турецкий.', options: ['Sen', 'Ben', 'Biz'], correct: 'Ben' },
+      { type: 'word_order', words: ['öğreniyorum.', 'Ben', 'Türkçe'], correct: 'Ben Türkçe öğreniyorum.', translation: 'Я учу турецкий.' },
+    ],
+    finale: { phrase_tr: 'Ben Türkçe öğreniyorum.', phrase_ru: 'Я учу турецкий.', prompt: 'Теперь ты знаешь, кто есть кто. Ben — это ты.' },
+  },
+  {
+    mission: 3, grammar_topic: 'Глагол olmak — быть/являться',
+    hook: { phrase_tr: 'O çok güzel.', phrase_ru: 'Она очень красивая.', prompt: 'В этой фразе нет глагола «быть» — и это правильно. Сейчас объясним почему.' },
+    explanation: {
+      rule: 'В настоящем времени глагол «быть» (olmak) часто не нужен. Вместо него к слову добавляется личный аффикс: -im (я), -sin (ты), -yiz (мы), -siniz (вы). Для «он/она» — ничего не добавляется.',
+      examples: [
+        { tr: 'Ben öğrenciyim.', ru: 'Я студентка.' }, { tr: 'Sen güzelsin.', ru: 'Ты красивая.' },
+        { tr: 'O Türk.', ru: 'Он турок. (аффикс не нужен)' },
+      ],
+    },
+    exercises: [
+      { type: 'recognize', question_ru: 'Как сказать «Я студентка»?', options: ['Ben öğrenci.', 'Ben öğrenciyim.', 'Ben öğrencisin.'], correct: 'Ben öğrenciyim.' },
+      { type: 'fill_blank', sentence_tr: 'Sen çok _____sin.', sentence_ru: 'Ты очень красивая.', options: ['güzel', 'güzelim', 'güzeliz'], correct: 'güzel' },
+      { type: 'fill_blank', sentence_tr: 'Ben Rus_____.', sentence_ru: 'Я русская.', options: ['yım', 'sın', 'yız'], correct: 'yım' },
+      { type: 'word_order', words: ['güzel.', 'çok', 'O'], correct: 'O çok güzel.', translation: 'Она очень красивая.' },
+    ],
+    finale: { phrase_tr: 'O çok güzel.', phrase_ru: 'Она очень красивая.', prompt: 'Глагола «быть» нет — а смысл есть. Турецкий работает именно так.' },
+  },
+  {
+    mission: 4, grammar_topic: 'Аффиксы принадлежности',
+    hook: { phrase_tr: "Benim ailem Rusya'da.", phrase_ru: 'Моя семья в России.', prompt: 'В этой фразе спрятаны сразу два правила, которые ты выучишь сегодня.' },
+    explanation: {
+      rule: 'Принадлежность выражается аффиксом на конце слова по закону гармонии гласных: после а/ı — с ı, после е/i — с i, после о/u — с u, после ö/ü — с ü.',
+      examples: [
+        { tr: 'Benim evim', ru: 'Мой дом (ev → evim)' }, { tr: 'Senin annen', ru: 'Твоя мама (anne → annen)' },
+        { tr: 'Onun adı', ru: 'Его имя (ad → adı)' },
+      ],
+    },
+    exercises: [
+      { type: 'recognize', question_ru: 'Как сказать «моя семья»?', options: ['aile', 'ailem', 'ailesi'], correct: 'ailem' },
+      { type: 'fill_blank', sentence_tr: 'Benim ev_____.', sentence_ru: 'Мой дом.', options: ['im', 'em', 'ım'], correct: 'im' },
+      { type: 'fill_blank', sentence_tr: 'Senin ad_____ ne?', sentence_ru: 'Как тебя зовут?', options: ['ın', 'in', 'un'], correct: 'ın' },
+      { type: 'word_order', words: ["Rusya'da.", 'ailem', 'Benim'], correct: "Benim ailem Rusya'da.", translation: 'Моя семья в России.' },
+    ],
+    finale: { phrase_tr: "Benim ailem Rusya'da.", phrase_ru: 'Моя семья в России.', prompt: 'Benim ailem — моя семья. Ты уже умеешь говорить о близких по-турецки.' },
+  },
+  {
+    mission: 5, grammar_topic: 'Вопросительные слова',
+    hook: { phrase_tr: 'Nerede yaşıyorsun?', phrase_ru: 'Где ты живёшь?', prompt: 'Это один из первых вопросов, который задаёт тебе турок. Сегодня научишься его понимать и задавать сама.' },
+    explanation: {
+      rule: 'Вопросительные слова стоят перед глаголом. Интонация не меняется — слово уже указывает на вопрос.',
+      examples: [
+        { tr: 'Ne?', ru: 'Что?' }, { tr: 'Kim?', ru: 'Кто?' }, { tr: 'Nerede?', ru: 'Где?' },
+        { tr: 'Nasıl?', ru: 'Как?' }, { tr: 'Kaç?', ru: 'Сколько?' }, { tr: 'Neden / Niye?', ru: 'Почему?' },
+      ],
+    },
+    exercises: [
+      { type: 'recognize', question_ru: 'Как спросить «где»?', options: ['Ne', 'Nerede', 'Nasıl'], correct: 'Nerede' },
+      { type: 'recognize', question_ru: 'Что означает «Nasıl»?', options: ['Где', 'Кто', 'Как'], correct: 'Как' },
+      { type: 'fill_blank', sentence_tr: '_____ yaşıyorsun?', sentence_ru: 'Где ты живёшь?', options: ['Kim', 'Nerede', 'Kaç'], correct: 'Nerede' },
+      { type: 'word_order', words: ['yaşıyorsun?', 'Nerede'], correct: 'Nerede yaşıyorsun?', translation: 'Где ты живёшь?' },
+    ],
+    finale: { phrase_tr: 'Nerede yaşıyorsun?', phrase_ru: 'Где ты живёшь?', prompt: 'Теперь ты можешь спросить — и понять ответ.' },
+  },
+  {
+    mission: 6, grammar_topic: 'Geniş Zaman — настоящее обычное время',
+    hook: { phrase_tr: 'Her gün çay içerim.', phrase_ru: 'Каждый день я пью чай.', prompt: 'Это время для привычек и того, что ты делаешь всегда. Разберём, как оно строится.' },
+    explanation: {
+      rule: 'Geniş Zaman — время привычных действий. Строится: основа глагола + -ir/-er/-ar/-ur (по гармонии гласных) + личный аффикс.',
+      examples: [
+        { tr: 'Ben içerim', ru: 'Я пью (всегда)' }, { tr: 'Sen içersin', ru: 'Ты пьёшь' },
+        { tr: 'O yaşar', ru: 'Он живёт' }, { tr: 'Biz severiz', ru: 'Мы любим' },
+      ],
+    },
+    exercises: [
+      { type: 'recognize', question_ru: 'Какая форма означает «я пью (обычно)»?', options: ['içerim', 'içersin', 'içer'], correct: 'içerim' },
+      { type: 'fill_blank', sentence_tr: 'Ben her gün çay _____.', sentence_ru: 'Я каждый день пью чай.', options: ['içerim', 'içer', 'içersin'], correct: 'içerim' },
+      { type: 'fill_blank', sentence_tr: "O Türkiye'de yaşa_____.", sentence_ru: 'Он живёт в Турции.', options: ['r', 'rim', 'rım'], correct: 'r' },
+      { type: 'word_order', words: ['çay', 'Ben', 'içerim.', 'her gün'], correct: 'Ben her gün çay içerim.', translation: 'Я каждый день пью чай.' },
+    ],
+    finale: { phrase_tr: 'Her gün çay içerim.', phrase_ru: 'Каждый день я пью чай.', prompt: 'Теперь ты можешь рассказать о своих привычках по-турецки.' },
+  },
+  {
+    mission: 7, grammar_topic: 'Отрицание',
+    hook: { phrase_tr: 'Türkçe bilmiyorum ama öğreniyorum.', phrase_ru: 'Я не знаю турецкий, но учу.', prompt: 'Одна из самых честных фраз для начинающих. И одна из самых полезных.' },
+    explanation: {
+      rule: 'Отрицание глагола: аффикс -me/-ma перед личным окончанием. Отрицание существительного/прилагательного: слово değil после него.',
+      examples: [
+        { tr: 'Bilmiyorum', ru: 'Я не знаю (bil + mi + yorum)' }, { tr: 'Gitmiyorum', ru: 'Я не иду' },
+        { tr: 'Ben öğrenci değilim.', ru: 'Я не студентка.' },
+      ],
+    },
+    exercises: [
+      { type: 'recognize', question_ru: 'Как сказать «я не знаю»?', options: ['biliyorum', 'bilmiyorum', 'bilirim'], correct: 'bilmiyorum' },
+      { type: 'fill_blank', sentence_tr: 'Ben öğrenci _____im.', sentence_ru: 'Я не студентка.', options: ['değil', 'yok', 'hayır'], correct: 'değil' },
+      { type: 'fill_blank', sentence_tr: 'Git_____yorum.', sentence_ru: 'Я не иду.', options: ['me', 'ma', 'mi'], correct: 'mi' },
+      { type: 'word_order', words: ['ama', 'bilmiyorum', 'Türkçe', 'öğreniyorum.'], correct: 'Türkçe bilmiyorum ama öğreniyorum.', translation: 'Я не знаю турецкий, но учу.' },
+    ],
+    finale: { phrase_tr: 'Türkçe bilmiyorum ama öğreniyorum.', phrase_ru: 'Я не знаю турецкий, но учу.', prompt: 'Эту фразу оценит любой турок. Она честная и живая.' },
+  },
+  {
+    mission: 8, grammar_topic: 'Падеж направления -e/-a (yönelme hali)',
+    hook: { phrase_tr: 'Eve gidiyorum.', phrase_ru: 'Я иду домой.', prompt: 'Куда ты идёшь? По-турецки «куда» прячется прямо в слове.' },
+    explanation: {
+      rule: 'Чтобы сказать «куда», добавляй -e или -a (по гармонии гласных). Если слово оканчивается на гласную — добавляется -ye/-ya.',
+      examples: [
+        { tr: 'ev → eve', ru: 'дом → домой / в дом' }, { tr: 'okul → okula', ru: 'школа → в школу' },
+        { tr: "Türkiye → Türkiye'ye", ru: 'Турция → в Турцию' },
+      ],
+    },
+    exercises: [
+      { type: 'recognize', question_ru: 'Как сказать «в школу»?', options: ['okul', 'okula', 'okulda'], correct: 'okula' },
+      { type: 'fill_blank', sentence_tr: "Türkiye'_____ gidiyorum.", sentence_ru: 'Я еду в Турцию.', options: ['ye', 'de', 'den'], correct: 'ye' },
+      { type: 'fill_blank', sentence_tr: 'Ev_____ gidiyorum.', sentence_ru: 'Я иду домой.', options: ['e', 'de', 'den'], correct: 'e' },
+      { type: 'word_order', words: ['gidiyorum.', 'Eve'], correct: 'Eve gidiyorum.', translation: 'Я иду домой.' },
+    ],
+    finale: { phrase_tr: 'Eve gidiyorum.', phrase_ru: 'Я иду домой.', prompt: 'Eve — это «домой». Одна буква меняет всё значение.' },
+  },
+  {
+    mission: 9, grammar_topic: 'Падеж местонахождения -de/-da (bulunma hali)',
+    hook: { phrase_tr: "Türkiye'de yaşıyorum.", phrase_ru: 'Я живу в Турции.', prompt: 'Прошлая миссия — куда. Эта — где. Одна буква, другой смысл.' },
+    explanation: {
+      rule: 'Чтобы сказать «где», добавляй -de/-da или -te/-ta (после глухих согласных). После е/i/ö/ü → -de, после а/ı/o/u → -da.',
+      examples: [
+        { tr: 'evde', ru: 'дома (в доме)' }, { tr: 'okulda', ru: 'в школе' },
+        { tr: "Türkiye'de", ru: 'в Турции' }, { tr: 'markette', ru: 'в магазине (market → -te)' },
+      ],
+    },
+    exercises: [
+      { type: 'recognize', question_ru: 'Как сказать «в школе»?', options: ['okula', 'okulda', 'okuldan'], correct: 'okulda' },
+      { type: 'fill_blank', sentence_tr: 'Ben ev_____ oturuyorum.', sentence_ru: 'Я сижу дома.', options: ['de', 'e', 'den'], correct: 'de' },
+      { type: 'fill_blank', sentence_tr: 'Market_____ ne var?', sentence_ru: 'Что есть в магазине?', options: ['te', 'e', 'ten'], correct: 'te' },
+      { type: 'word_order', words: ['yaşıyorum.', "Türkiye'de"], correct: "Türkiye'de yaşıyorum.", translation: 'Я живу в Турции.' },
+    ],
+    finale: { phrase_tr: "Türkiye'de yaşıyorum.", phrase_ru: 'Я живу в Турции.', prompt: 'Теперь ты можешь сказать, где ты находишься.' },
+  },
+  {
+    mission: 10, grammar_topic: 'Падеж исходный -den/-dan (ayrılma hali)',
+    hook: { phrase_tr: "Rusya'dan geliyorum.", phrase_ru: 'Я приехала из России.', prompt: 'Откуда ты? По-турецки это тоже спрятано в слове.' },
+    explanation: {
+      rule: 'Чтобы сказать «откуда» или «из чего», добавляй -den/-dan (или -ten/-tan после глухих согласных). Логика гармонии гласных та же.',
+      examples: [
+        { tr: 'evden', ru: 'из дома' }, { tr: 'okuldan', ru: 'из школы' },
+        { tr: "Rusya'dan", ru: 'из России' }, { tr: 'marketten', ru: 'из магазина' },
+      ],
+    },
+    exercises: [
+      { type: 'recognize', question_ru: 'Как сказать «из дома»?', options: ['eve', 'evde', 'evden'], correct: 'evden' },
+      { type: 'fill_blank', sentence_tr: "Rusya'_____ geliyorum.", sentence_ru: 'Я из России.', options: ['dan', 'da', 'ya'], correct: 'dan' },
+      { type: 'fill_blank', sentence_tr: 'Okul_____ geliyorum.', sentence_ru: 'Я иду из школы.', options: ['dan', 'da', 'a'], correct: 'dan' },
+      { type: 'word_order', words: ['geliyorum.', "Rusya'dan"], correct: "Rusya'dan geliyorum.", translation: 'Я приехала из России.' },
+    ],
+    finale: { phrase_tr: "Rusya'dan geliyorum.", phrase_ru: 'Я приехала из России.', prompt: 'Три падежа — три вопроса: где, куда, откуда. Ты знаешь все три.' },
+  },
+  {
+    mission: 11, grammar_topic: 'Настоящее время -iyor (şimdiki zaman)',
+    hook: { phrase_tr: 'Şu an ne yapıyorsun?', phrase_ru: 'Что ты сейчас делаешь?', prompt: 'Это время для того, что происходит прямо сейчас. Именно в эту минуту.' },
+    explanation: {
+      rule: 'Şimdiki zaman — настоящее длительное. Строится: основа глагола + -iyor + личный аффикс. Если основа оканчивается на гласную — она убирается перед -iyor.',
+      examples: [
+        { tr: 'Ben yapıyorum', ru: 'Я делаю (сейчас)' }, { tr: 'Sen gidiyorsun', ru: 'Ты идёшь' },
+        { tr: 'O uyuyor', ru: 'Он спит' }, { tr: 'Biz yiyoruz', ru: 'Мы едим (ye → y + iyor)' },
+      ],
+    },
+    exercises: [
+      { type: 'recognize', question_ru: 'Как сказать «я делаю (сейчас)»?', options: ['yaparım', 'yapıyorum', 'yaptım'], correct: 'yapıyorum' },
+      { type: 'fill_blank', sentence_tr: 'Sen ne yap_____sun?', sentence_ru: 'Что ты делаешь?', options: ['ıyor', 'iyor', 'uyor'], correct: 'ıyor' },
+      { type: 'fill_blank', sentence_tr: 'O şu an uyu_____.', sentence_ru: 'Он сейчас спит.', options: ['yor', 'uyor', 'iyor'], correct: 'yor' },
+      { type: 'word_order', words: ['yapıyorsun?', 'Şu an', 'ne'], correct: 'Şu an ne yapıyorsun?', translation: 'Что ты сейчас делаешь?' },
+    ],
+    finale: { phrase_tr: 'Şu an ne yapıyorsun?', phrase_ru: 'Что ты сейчас делаешь?', prompt: 'Şu an — прямо сейчас. Этот вопрос открывает любой разговор.' },
+  },
+  {
+    mission: 12, grammar_topic: 'Прошедшее время -di (geçmiş zaman)',
+    hook: { phrase_tr: 'Dün seninle konuştum.', phrase_ru: 'Вчера я разговаривала с тобой.', prompt: 'Ты уже говоришь о настоящем. Теперь научимся говорить о том, что уже было.' },
+    explanation: {
+      rule: 'Прошедшее время: основа глагола + -di/-dı/-du/-dü (или -ti/-tı/-tu/-tü после глухих) + личный аффикс.',
+      examples: [
+        { tr: 'Ben konuştum', ru: 'Я поговорила (konuş + tu + m)' }, { tr: 'Sen geldin', ru: 'Ты пришла' },
+        { tr: 'O gitti', ru: 'Он ушёл' }, { tr: 'Biz gördük', ru: 'Мы увидели' },
+      ],
+    },
+    exercises: [
+      { type: 'recognize', question_ru: 'Как сказать «он ушёл»?', options: ['gidiyor', 'gider', 'gitti'], correct: 'gitti' },
+      { type: 'fill_blank', sentence_tr: 'Ben dün evde kal_____.', sentence_ru: 'Вчера я осталась дома.', options: ['dım', 'dim', 'dum'], correct: 'dım' },
+      { type: 'fill_blank', sentence_tr: 'Sen dün ne yap_____?', sentence_ru: 'Что ты вчера делала?', options: ['tın', 'tım', 'tı'], correct: 'tın' },
+      { type: 'word_order', words: ['konuştum.', 'seninle', 'Dün'], correct: 'Dün seninle konuştum.', translation: 'Вчера я разговаривала с тобой.' },
+    ],
+    finale: { phrase_tr: 'Dün seninle konuştum.', phrase_ru: 'Вчера я разговаривала с тобой.', prompt: 'Поздравляю. Ты прошла все 12 миссий А1. Теперь у тебя есть основа — и она настоящая.' },
+  },
+];
+
+// Слияние расширенного контента в миссии A1
+A1_CONTENT.forEach(c => {
+  const m = MISSIONS.find(x => x.id === c.mission);
+  if (m) {
+    m.hook = c.hook;
+    m.explanation = c.explanation;
+    m.exercises = c.exercises;
+    m.finale = c.finale;
+    m.grammar_topic = c.grammar_topic;
+  }
+});

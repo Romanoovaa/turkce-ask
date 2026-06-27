@@ -743,6 +743,24 @@ body {
   border-radius: 14px; padding: 1rem 1.25rem; font-size: .95rem; font-weight: 600;
   line-height: 1.5;
 }
+.step-hook {
+  margin-top: 1.25rem;
+  background: linear-gradient(135deg, #E91E63, #FF7043);
+  color: white; border-radius: 16px; padding: 1.25rem; cursor: pointer;
+  box-shadow: 0 6px 20px rgba(233,30,99,0.25);
+}
+.hook-phrase { font-size: 1.2rem; font-weight: 900; }
+.hook-ru { font-size: .85rem; opacity: .9; margin-top: 4px; }
+.hook-prompt { font-size: .82rem; opacity: .85; margin-top: 10px; line-height: 1.5; font-style: italic; }
+
+.step-finale {
+  margin: 1.25rem 0;
+  background: var(--pink-light); color: var(--pink-deep);
+  border-radius: 16px; padding: 1.25rem; cursor: pointer; text-align: center;
+}
+.finale-phrase { font-size: 1.2rem; font-weight: 900; color: var(--pink-dark); }
+.finale-ru { font-size: .85rem; color: var(--text-muted); margin-top: 4px; }
+.finale-prompt { font-size: .85rem; margin-top: 10px; line-height: 1.55; font-weight: 600; }
 
 .step-word, .step-phrase {
   background: var(--card);
