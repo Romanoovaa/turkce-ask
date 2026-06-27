@@ -447,6 +447,202 @@ body {
   transition: width .5s ease;
 }
 
+/* ===== LEARN HUB ===== */
+.learn-header {
+  background: linear-gradient(135deg, #1565C0, #42A5F5);
+  color: white;
+  padding: 2.5rem 1.5rem 2rem;
+  border-radius: 0 0 28px 28px;
+}
+.learn-header h1 { font-size: 1.5rem; font-weight: 900; }
+.learn-header p { font-size: .85rem; opacity: .85; margin-top: 4px; }
+
+.learn-search {
+  padding: 1rem 1rem 0;
+}
+.learn-search input {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid #eee;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: .95rem;
+  background: var(--card);
+  color: var(--text);
+  outline: none;
+}
+.learn-search input:focus { border-color: #42A5F5; }
+.learn-search input::placeholder { color: var(--text-muted); }
+
+.learn-menu { padding: 1rem; }
+.learn-card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 18px 16px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: transform .15s;
+  animation: slideUp .3s ease backwards;
+}
+.learn-card:nth-child(1) { animation-delay: .05s; }
+.learn-card:nth-child(2) { animation-delay: .1s; }
+.learn-card:nth-child(3) { animation-delay: .15s; }
+.learn-card:nth-child(4) { animation-delay: .2s; }
+.learn-card:nth-child(5) { animation-delay: .25s; }
+.learn-card:active { transform: scale(.97); }
+.learn-card-icon { font-size: 2rem; }
+.learn-card-info { flex: 1; }
+.learn-card-title { font-size: .95rem; font-weight: 800; }
+.learn-card-sub { font-size: .78rem; color: var(--text-muted); margin-top: 2px; }
+.learn-card-arrow { color: #ccc; font-size: 1.2rem; }
+
+/* Search results */
+.search-results { padding: .5rem 1rem; }
+.search-group-title {
+  font-size: .75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-muted);
+  padding: 12px 0 6px;
+}
+.search-item {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 6px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform .1s;
+}
+.search-item:active { transform: scale(.98); }
+.search-item-tr { font-weight: 800; color: var(--pink-dark); }
+.search-item-ru { font-size: .85rem; color: var(--text-muted); margin-top: 2px; }
+
+/* ===== VERBS ===== */
+.verbs-list { padding: .5rem 1rem; }
+.verb-card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform .15s;
+  border-left: 4px solid #1565C0;
+  animation: slideIn .3s ease backwards;
+}
+.verb-card:active { transform: scale(.97); }
+.verb-word { font-size: 1.1rem; font-weight: 900; color: #1565C0; }
+.verb-meaning { font-size: .85rem; color: var(--text-muted); margin-top: 2px; }
+.verb-example { font-size: .8rem; color: var(--text-muted); font-style: italic; margin-top: 6px; }
+
+/* Verb detail */
+.verb-detail-content { padding: 0 1rem; }
+.vd-header { text-align: center; padding: 1rem 0; }
+.vd-word { font-size: 2rem; font-weight: 900; color: #1565C0; }
+.vd-meaning { font-size: 1rem; color: var(--text-muted); margin-top: 4px; }
+.vd-tense {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 1rem;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+}
+.vd-tense-title { font-size: .8rem; font-weight: 800; color: #1565C0; text-transform: uppercase; letter-spacing: .03em; margin-bottom: 10px; }
+.vd-conj { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.vd-conj-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f0f0f0; }
+.vd-pronoun { font-weight: 700; color: var(--text-muted); font-size: .85rem; }
+.vd-form { font-weight: 800; color: var(--text); font-size: .85rem; }
+.vd-section { margin-bottom: 12px; }
+.vd-section-title { font-size: .8rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+.vd-example, .vd-combo {
+  background: var(--card);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  font-size: .88rem;
+  box-shadow: var(--shadow);
+  color: var(--text);
+}
+
+/* ===== GRAMMAR ===== */
+.grammar-list { padding: .5rem 1rem; }
+.grammar-card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: transform .15s;
+  animation: slideIn .3s ease backwards;
+}
+.grammar-card:active { transform: scale(.97); }
+.grammar-card-emoji { font-size: 2rem; }
+.grammar-card-info { flex: 1; }
+.grammar-card-title { font-size: .95rem; font-weight: 800; }
+.grammar-card-desc { font-size: .78rem; color: var(--text-muted); margin-top: 2px; }
+.grammar-card-level {
+  font-size: .7rem;
+  font-weight: 800;
+  background: #e3f2fd;
+  color: #1565C0;
+  padding: 4px 10px;
+  border-radius: 99px;
+}
+
+/* Grammar lesson content */
+.grammar-lesson-content {
+  padding: 1rem;
+  line-height: 1.7;
+  font-size: .95rem;
+}
+.grammar-lesson-content h3 { font-size: 1.2rem; font-weight: 900; margin-bottom: 1rem; color: var(--text); }
+.grammar-lesson-content p { margin-bottom: .75rem; color: var(--text); }
+.grammar-table {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 4px;
+  margin: 1rem 0;
+  box-shadow: var(--shadow);
+}
+.grammar-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid #f0f0f0;
+  gap: 12px;
+}
+.grammar-row:last-child { border-bottom: none; }
+.g-letter { font-weight: 900; color: #1565C0; min-width: 60px; font-size: .95rem; }
+.g-sound { font-weight: 700; color: var(--text-muted); min-width: 80px; font-size: .85rem; }
+.g-example { font-size: .85rem; color: var(--text); font-style: italic; }
+.grammar-box {
+  background: #e3f2fd;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin: 1rem 0;
+  color: #0D47A1;
+  font-weight: 600;
+}
+.grammar-tip {
+  background: #fff8e1;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: .75rem 0;
+  font-size: .85rem;
+  color: #E65100;
+  font-weight: 600;
+}
+
 /* ===== CARDS SCREEN ===== */
 .cards-screen {
   background: var(--bg);

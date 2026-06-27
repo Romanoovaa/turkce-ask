@@ -107,6 +107,96 @@
   <div class="sections-grid" id="sections-grid"></div>
 </div>
 
+<!-- Learn Hub -->
+<div class="screen nav-screen" id="screen-learn">
+  <div class="learn-header">
+    <h1>Учить</h1>
+    <p>Выбери, что хочешь изучать</p>
+  </div>
+  <div class="learn-search">
+    <input type="text" id="learn-search-input" placeholder="Поиск по словам, фразам..." oninput="APP.handleSearch(this.value)">
+  </div>
+  <div id="search-results" class="search-results" style="display:none"></div>
+  <div id="learn-menu" class="learn-menu">
+    <div class="learn-card" onclick="APP.showScreen('home')">
+      <div class="learn-card-icon">🃏</div>
+      <div class="learn-card-info">
+        <div class="learn-card-title">Слова</div>
+        <div class="learn-card-sub">500 слов по 6 темам</div>
+      </div>
+      <div class="learn-card-arrow">→</div>
+    </div>
+    <div class="learn-card" onclick="APP.showScreen('verbs')">
+      <div class="learn-card-icon">📝</div>
+      <div class="learn-card-info">
+        <div class="learn-card-title">Глаголы</div>
+        <div class="learn-card-sub">20 глаголов со спряжением</div>
+      </div>
+      <div class="learn-card-arrow">→</div>
+    </div>
+    <div class="learn-card" onclick="APP.showScreen('grammar')">
+      <div class="learn-card-icon">📖</div>
+      <div class="learn-card-info">
+        <div class="learn-card-title">Грамматика</div>
+        <div class="learn-card-sub">5 уроков для начинающих</div>
+      </div>
+      <div class="learn-card-arrow">→</div>
+    </div>
+    <div class="learn-card" onclick="APP.showScreen('phrases')">
+      <div class="learn-card-icon">🗣️</div>
+      <div class="learn-card-info">
+        <div class="learn-card-title">Фразы</div>
+        <div class="learn-card-sub">60 фраз для жизни</div>
+      </div>
+      <div class="learn-card-arrow">→</div>
+    </div>
+    <div class="learn-card" onclick="APP.startFillExercise()">
+      <div class="learn-card-icon">✏️</div>
+      <div class="learn-card-info">
+        <div class="learn-card-title">Упражнения</div>
+        <div class="learn-card-sub">Вставь слово, квизы</div>
+      </div>
+      <div class="learn-card-arrow">→</div>
+    </div>
+  </div>
+</div>
+
+<!-- Verbs -->
+<div class="screen" id="screen-verbs" style="background:var(--bg);padding-bottom:2rem">
+  <div class="cards-header">
+    <button class="back-btn" onclick="APP.showScreen('learn')">←</button>
+    <h2>📝 Глаголы</h2>
+  </div>
+  <div id="verbs-list" class="verbs-list"></div>
+</div>
+
+<!-- Verb Detail -->
+<div class="screen" id="screen-verb-detail" style="background:var(--bg);padding-bottom:2rem">
+  <div class="cards-header">
+    <button class="back-btn" onclick="APP.showScreen('verbs')">←</button>
+    <h2 id="verb-detail-title">Глагол</h2>
+  </div>
+  <div id="verb-detail-content" class="verb-detail-content"></div>
+</div>
+
+<!-- Grammar -->
+<div class="screen" id="screen-grammar" style="background:var(--bg);padding-bottom:2rem">
+  <div class="cards-header">
+    <button class="back-btn" onclick="APP.showScreen('learn')">←</button>
+    <h2>📖 Грамматика</h2>
+  </div>
+  <div id="grammar-list" class="grammar-list"></div>
+</div>
+
+<!-- Grammar Lesson -->
+<div class="screen" id="screen-grammar-lesson" style="background:var(--bg);padding-bottom:2rem">
+  <div class="cards-header">
+    <button class="back-btn" onclick="APP.showScreen('grammar')">←</button>
+    <h2 id="grammar-lesson-title">Урок</h2>
+  </div>
+  <div id="grammar-lesson-content" class="grammar-lesson-content"></div>
+</div>
+
 <!-- Cards -->
 <div class="screen cards-screen" id="screen-cards">
   <div class="cards-header">
@@ -267,9 +357,9 @@
     <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
     <span class="nav-label">Главная</span>
   </button>
-  <button class="nav-item" data-screen="phrases" onclick="APP.showScreen('phrases')">
-    <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span>
-    <span class="nav-label">Фразы</span>
+  <button class="nav-item" data-screen="learn" onclick="APP.showScreen('learn')">
+    <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></span>
+    <span class="nav-label">Учить</span>
   </button>
   <button class="nav-item" data-screen="translate" onclick="APP.showScreen('translate')">
     <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></span>
@@ -288,6 +378,7 @@
 <script src="js/data.js"></script>
 <script src="js/phrases.js"></script>
 <script src="js/gamification.js"></script>
+<script src="js/verbs.js"></script>
 <script src="js/app.js"></script>
 <script>
 // Service Worker for offline

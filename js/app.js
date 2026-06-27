@@ -304,7 +304,7 @@ const APP = {
     this.state.screen = name;
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const nav = document.querySelector('.bottom-nav');
-    const showNav = ['home', 'favorites', 'translate', 'phrases', 'profile'].includes(name);
+    const showNav = ['home', 'favorites', 'translate', 'learn', 'profile'].includes(name);
     nav.classList.toggle('hidden', !showNav);
     if (showNav) {
       document.querySelectorAll('.nav-item').forEach(n => {
@@ -322,6 +322,8 @@ const APP = {
       if (name === 'favorites') this.renderFavorites();
       if (name === 'phrases') this.renderPhrases();
       if (name === 'profile') this.renderProfile();
+      if (name === 'verbs') this.renderVerbs();
+      if (name === 'grammar') this.renderGrammar();
     }
   },
 
@@ -803,6 +805,135 @@ const APP = {
         <button class="fav-remove" onclick="APP.removeFav(${w.n})">✕</button>
       </div>
     `).join('');
+  },
+
+  // ===== VERBS =====
+  renderVerbs() {
+    document.getElementById('verbs-list').innerHTML = VERBS.map(v => `
+      <div class="verb-card" onclick="APP.openVerb(${v.id})">
+        <div class="verb-word">${v.tr}</div>
+        <div class="verb-meaning">${v.ru}</div>
+        <div class="verb-example">${v.examples[0].split('—')[0].trim()}</div>
+      </div>
+    `).join('');
+  },
+
+  openVerb(id) {
+    const v = VERBS.find(x => x.id === id);
+    if (!v) return;
+    document.getElementById('verb-detail-title').textContent = v.tr;
+    const tenses = [
+      { name: 'Настоящее', data: v.present },
+      { name: 'Прошедшее', data: v.past },
+      { name: 'Будущее', data: v.future },
+    ];
+    document.getElementById('verb-detail-content').innerHTML = `
+      <div class="vd-header">
+        <div class="vd-word">${v.tr}</div>
+        <div class="vd-meaning">${v.ru}</div>
+        <button class="sound-btn" style="width:44px;height:44px;font-size:1.2rem;margin:8px 0" onclick="APP.speak('${v.tr}')">🔊</button>
+      </div>
+      ${tenses.map(t => `
+        <div class="vd-tense">
+          <div class="vd-tense-title">${t.name} время</div>
+          <div class="vd-conj">
+            ${Object.entries(t.data).map(([p, f]) => `<div class="vd-conj-row"><span class="vd-pronoun">${p}</span><span class="vd-form">${f}</span></div>`).join('')}
+          </div>
+        </div>
+      `).join('')}
+      <div class="vd-section">
+        <div class="vd-section-title">Примеры</div>
+        ${v.examples.map(e => `<div class="vd-example">${e}</div>`).join('')}
+      </div>
+      <div class="vd-section">
+        <div class="vd-section-title">Словосочетания</div>
+        ${v.combos.map(c => `<div class="vd-combo">${c}</div>`).join('')}
+      </div>
+    `;
+    this.showScreen('verb-detail');
+  },
+
+  // ===== GRAMMAR =====
+  renderGrammar() {
+    document.getElementById('grammar-list').innerHTML = GRAMMAR_LESSONS.map(l => `
+      <div class="grammar-card" onclick="APP.openGrammarLesson(${l.id})">
+        <div class="grammar-card-emoji">${l.emoji}</div>
+        <div class="grammar-card-info">
+          <div class="grammar-card-title">${l.title}</div>
+          <div class="grammar-card-desc">${l.desc}</div>
+        </div>
+        <div class="grammar-card-level">${l.level}</div>
+      </div>
+    `).join('');
+  },
+
+  openGrammarLesson(id) {
+    const l = GRAMMAR_LESSONS.find(x => x.id === id);
+    if (!l) return;
+    document.getElementById('grammar-lesson-title').textContent = l.emoji + ' ' + l.title;
+    document.getElementById('grammar-lesson-content').innerHTML = l.content;
+    this.showScreen('grammar-lesson');
+  },
+
+  // ===== SEARCH =====
+  handleSearch(query) {
+    const q = query.trim().toLowerCase();
+    const resultsEl = document.getElementById('search-results');
+    const menuEl = document.getElementById('learn-menu');
+    if (q.length < 2) {
+      resultsEl.style.display = 'none';
+      menuEl.style.display = 'block';
+      return;
+    }
+    resultsEl.style.display = 'block';
+    menuEl.style.display = 'none';
+
+    const wordResults = WORDS.filter(w =>
+      w.tr.toLowerCase().includes(q) || w.ru.toLowerCase().includes(q)
+    ).slice(0, 10);
+
+    const phraseResults = PHRASES.filter(p =>
+      p.tr.toLowerCase().includes(q) || p.ru.toLowerCase().includes(q)
+    ).slice(0, 5);
+
+    const verbResults = VERBS.filter(v =>
+      v.tr.toLowerCase().includes(q) || v.ru.toLowerCase().includes(q)
+    ).slice(0, 5);
+
+    if (wordResults.length === 0 && phraseResults.length === 0 && verbResults.length === 0) {
+      resultsEl.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>Ничего не найдено</p></div>';
+      return;
+    }
+
+    let html = '';
+    if (wordResults.length > 0) {
+      html += '<div class="search-group-title">Слова</div>';
+      html += wordResults.map(w => `
+        <div class="search-item" onclick="APP.speak('${w.tr}')">
+          <div class="search-item-tr">${w.tr}</div>
+          <div class="search-item-ru">${w.ru}</div>
+        </div>
+      `).join('');
+    }
+    if (verbResults.length > 0) {
+      html += '<div class="search-group-title">Глаголы</div>';
+      html += verbResults.map(v => `
+        <div class="search-item" onclick="APP.openVerb(${v.id})">
+          <div class="search-item-tr">${v.tr}</div>
+          <div class="search-item-ru">${v.ru}</div>
+        </div>
+      `).join('');
+    }
+    if (phraseResults.length > 0) {
+      html += '<div class="search-group-title">Фразы</div>';
+      html += phraseResults.map(p => `
+        <div class="search-item" onclick="APP.speak('${p.tr.replace(/'/g, "\\'")}')">
+          <div class="search-item-tr">${p.tr}</div>
+          <div class="search-item-ru">${p.ru}</div>
+        </div>
+      `).join('');
+    }
+    resultsEl.innerHTML = html;
   },
 
   // ===== PROFILE =====
