@@ -17,7 +17,7 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; background: var(--bg); }
+html, body { height: 100%; background: var(--bg); overflow: hidden; position: fixed; width: 100%; }
 html {
   --sat: env(safe-area-inset-top);
   --sab: env(safe-area-inset-bottom);
@@ -60,14 +60,13 @@ body {
 /* ===== SCREENS ===== */
 .screen {
   display: none;
-  min-height: 100vh;
-  min-height: 100dvh;
-  min-height: -webkit-fill-available;
+  height: 100vh;
+  height: 100dvh;
   flex-direction: column;
-  animation: fadeIn .3s ease;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
 }
 .screen.active { display: flex; }
 
@@ -95,8 +94,7 @@ body {
   justify-content: center;
   text-align: center;
   gap: 1.5rem;
-  min-height: 100vh;
-  min-height: 100dvh;
+  overflow: hidden;
 }
 .onboarding .logo { font-size: 3.5rem; margin-bottom: 0; }
 .onboarding h1 { font-size: 2rem; font-weight: 900; }
@@ -213,12 +211,6 @@ body {
   align-items: center;
   gap: 12px;
 }
-.ob-option { animation: fadeIn .4s ease backwards; }
-.ob-option:nth-child(1) { animation-delay: .05s; }
-.ob-option:nth-child(2) { animation-delay: .1s; }
-.ob-option:nth-child(3) { animation-delay: .15s; }
-.ob-option:nth-child(4) { animation-delay: .2s; }
-.ob-option:nth-child(5) { animation-delay: .25s; }
 .ob-option:active, .ob-option.selected {
   background: rgba(255,255,255,0.3);
   border-color: white;

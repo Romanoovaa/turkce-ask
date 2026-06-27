@@ -304,7 +304,7 @@ const APP = {
     this.state.screen = name;
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const nav = document.querySelector('.bottom-nav');
-    const showNav = ['home', 'favorites', 'translate', 'learn', 'profile'].includes(name);
+    const showNav = ['home', 'favorites', 'translate', 'learn', 'profile', 'phrases'].includes(name);
     nav.classList.toggle('hidden', !showNav);
     if (showNav) {
       document.querySelectorAll('.nav-item').forEach(n => {
