@@ -119,7 +119,7 @@
   </div>
   <div id="search-results" class="search-results" style="display:none"></div>
   <div id="learn-menu" class="learn-menu">
-    <div class="learn-card" onclick="APP.showScreen('home')">
+    <div class="learn-card" onclick="APP.showScreen('words')">
       <div class="learn-card-icon">🃏</div>
       <div class="learn-card-info">
         <div class="learn-card-title">Слова</div>
@@ -160,6 +160,15 @@
       <div class="learn-card-arrow">→</div>
     </div>
   </div>
+</div>
+
+<!-- Words categories -->
+<div class="screen" id="screen-words" style="background:var(--bg);padding-bottom:2rem">
+  <div class="cards-header">
+    <button class="back-btn" onclick="APP.showScreen('learn')">←</button>
+    <h2>🃏 Слова</h2>
+  </div>
+  <div class="sections-grid" id="words-grid"></div>
 </div>
 
 <!-- Verbs -->
@@ -346,7 +355,7 @@
 
 <!-- Favorites -->
 <div class="screen nav-screen" id="screen-favorites">
-  <div style="padding:2rem 1rem 1rem">
+  <div style="padding:1rem 1rem 1rem;padding-top:calc(env(safe-area-inset-top, 20px) + 16px)">
     <h2 style="font-size:1.3rem;font-weight:900">⭐ Избранное</h2>
   </div>
   <div class="fav-list" id="fav-list"></div>

@@ -320,6 +320,7 @@ const APP = {
       if (name === 'favorites') this.renderFavorites();
       if (name === 'phrases') this.renderPhrases();
       if (name === 'profile') this.renderProfile();
+      if (name === 'words') this.renderWords();
       if (name === 'verbs') this.renderVerbs();
       if (name === 'grammar') this.renderGrammar();
     }
@@ -474,8 +475,11 @@ const APP = {
       cont.style.display = 'none';
     }
 
-    const grid = document.getElementById('sections-grid');
-    grid.innerHTML = SECTIONS.map(sec => {
+    document.getElementById('sections-grid').innerHTML = this.buildSectionsHTML();
+  },
+
+  buildSectionsHTML() {
+    return SECTIONS.map(sec => {
       const sectionWords = WORDS.filter(w => w.s === sec.id);
       const learnedCount = sectionWords.filter(w => this.state.learned.includes(w.n)).length;
       const pct = sectionWords.length > 0 ? Math.round(learnedCount / sectionWords.length * 100) : 0;
@@ -490,6 +494,10 @@ const APP = {
         </div>
       `;
     }).join('');
+  },
+
+  renderWords() {
+    document.getElementById('words-grid').innerHTML = this.buildSectionsHTML();
   },
 
   // ===== CARDS =====
