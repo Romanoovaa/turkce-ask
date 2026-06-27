@@ -30,7 +30,7 @@ const config: CapacitorConfig = {
     contentInset: 'always',
     allowsLinkPreview: false,
     scrollEnabled: true,
-    backgroundColor: '#E91E63',
+    backgroundColor: '#FFFFFF',
   },
 };
 

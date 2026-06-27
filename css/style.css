@@ -104,10 +104,6 @@ body {
 .ob-dots {
   display: flex;
   gap: 8px;
-  position: absolute;
-  top: max(20px, env(safe-area-inset-top, 20px));
-  left: 50%;
-  transform: translateX(-50%);
 }
 .ob-dot {
   width: 8px;
@@ -207,8 +203,8 @@ body {
   gap: 10px;
 }
 .ob-options { gap: 10px; }
-.ob-option:active, .ob-option.selected {
-  background: rgba(255,255,255,0.3);
+.ob-option.selected {
+  background: rgba(255,255,255,0.35);
   border-color: white;
 }
 .ob-option .ob-icon { font-size: 1.5rem; }
@@ -357,10 +353,12 @@ body {
 .continue-sub { font-size: .75rem; opacity: .85; margin-top: 2px; }
 .continue-arrow { font-size: 1.2rem; opacity: .7; }
 .home-header {
-  background: linear-gradient(135deg, #E91E63, #FF7043);
+  background: linear-gradient(160deg, #E91E63, #FF7043);
   color: white;
   padding: 2.5rem 1.5rem 2rem;
+  padding-top: calc(1.5rem + env(safe-area-inset-top, 0px));
   border-radius: 0 0 28px 28px;
+  margin-top: calc(-1 * env(safe-area-inset-top, 0px));
 }
 .home-header h1 { font-size: 1.5rem; font-weight: 900; display: flex; align-items: center; gap: 8px; }
 .home-level-badge {
@@ -913,10 +911,11 @@ body {
   left: 0;
   right: 0;
   background: #FFFFFF;
-  border-top: 0.5px solid rgba(0,0,0,0.12);
+  border-top: 0.5px solid rgba(0,0,0,0.1);
   display: flex;
-  padding: 0;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  align-items: flex-start;
+  padding: 6px 0 0;
+  padding-bottom: env(safe-area-inset-bottom, 8px);
   z-index: 100;
 }
 .bottom-nav.hidden { display: none; }
@@ -926,31 +925,29 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
-  padding: 8px 0 6px;
+  gap: 4px;
+  padding: 6px 0;
   cursor: pointer;
   border: none;
   background: none;
   font-family: inherit;
-  color: #ACACAC;
+  color: #B0B0B0;
   position: relative;
-  min-height: 52px;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
-.nav-item svg { width: 24px; height: 24px; stroke-width: 1.8; }
+.nav-item svg { width: 26px; height: 26px; stroke-width: 1.6; }
 .nav-item.active { color: var(--pink); }
-.nav-item.active svg { stroke-width: 2.2; }
+.nav-item.active svg { stroke-width: 2; }
 .nav-item .nav-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 28px;
+  height: 30px;
 }
 .nav-item .nav-label {
-  font-size: .6rem;
+  font-size: .65rem;
   font-weight: 600;
-  letter-spacing: .01em;
 }
 
 /* ===== QUIZ START BUTTON ===== */
