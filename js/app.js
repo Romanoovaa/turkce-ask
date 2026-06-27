@@ -604,7 +604,8 @@ const APP = {
     if (m.grammarId) steps.push('grammar');
     if (m.phraseIds && m.phraseIds.length) steps.push('phrases');
     if (m.dialog && m.dialog.length) steps.push('dialog');
-    if (m.game) steps.push('game');
+    if (m.exercises && m.exercises.length) steps.push('trainer');
+    else if (m.game) steps.push('game');
     if (m.test && m.test.length) steps.push('test');
     steps.push('reward');
     return steps;
@@ -619,11 +620,13 @@ const APP = {
     el.scrollTop = 0;
     const fn = {
       intro: 'stepIntro', words: 'stepWords', verbs: 'stepVerbs', grammar: 'stepGrammar',
-      phrases: 'stepPhrases', dialog: 'stepDialog', game: 'stepGame', test: 'stepTest', reward: 'stepReward',
+      phrases: 'stepPhrases', dialog: 'stepDialog', game: 'stepGame', trainer: 'stepTrainer',
+      test: 'stepTest', reward: 'stepReward',
     }[step];
     el.innerHTML = this[fn](data);
     if (step === 'dialog') this.initDialogStep();
     if (step === 'game') this.initGameStep();
+    if (step === 'trainer') this.initTrainerStep();
     if (step === 'test') this.initTestStep();
   },
 
@@ -799,6 +802,89 @@ const APP = {
         this.playSound('wrong'); this.haptic('HEAVY');
         document.getElementById('game-next').innerHTML =
           `<button class="btn-secondary" onclick="APP.initGameStep();document.getElementById('game-answer').className='game-answer';document.getElementById('game-answer').innerHTML='';document.getElementById('game-next').innerHTML=''">Попробовать снова</button>`;
+      }
+    }
+  },
+
+  // ===== TRAINER (grammar exercises) =====
+  stepTrainer(m) {
+    return `
+      ${this.stepHeader('🏋️', 'Тренажёр грамматики')}
+      <div class="trainer-counter" id="trainer-counter"></div>
+      <div id="trainer-body"></div>`;
+  },
+
+  initTrainerStep() {
+    this.trainer = { i: 0, answered: false };
+    this.renderTrainerExercise();
+  },
+
+  renderTrainerExercise() {
+    const ex = this.mission.data.exercises;
+    if (this.trainer.i >= ex.length) {
+      this.missionNext();
+      return;
+    }
+    const e = ex[this.trainer.i];
+    this.trainer.answered = false;
+    document.getElementById('trainer-counter').textContent = `${this.trainer.i + 1} / ${ex.length}`;
+    const body = document.getElementById('trainer-body');
+    if (e.type === 'fill_blank') {
+      const opts = [...e.options].sort(() => Math.random() - 0.5);
+      body.innerHTML = `
+        <div class="trainer-q">
+          <div class="trainer-sentence">${e.sentence_tr.replace('_____', '<span class="trainer-blank">?</span>')}</div>
+          <div class="trainer-ru">${e.sentence_ru}</div>
+        </div>
+        <div class="quiz-options">
+          ${opts.map(o => `<button class="quiz-option" onclick="APP.answerTrainerFill(this, '${this.escapeHtml(o)}', '${this.escapeHtml(e.correct)}')">${o}</button>`).join('')}
+        </div>`;
+    } else if (e.type === 'word_order') {
+      this.trainerWords = e.correct.split(' ');
+      this.trainerPicked = [];
+      const shuffled = [...this.trainerWords].sort(() => Math.random() - 0.5);
+      body.innerHTML = `
+        <div class="trainer-q">
+          <div class="trainer-ru">${e.translation}</div>
+          <div class="trainer-hint">Собери предложение</div>
+        </div>
+        <div class="game-answer" id="trainer-answer"></div>
+        <div class="game-bank" id="trainer-bank">
+          ${shuffled.map((w, idx) => `<button class="game-chip" data-w="${this.escapeHtml(w)}" onclick="APP.trainerPick(this)">${w}</button>`).join('')}
+        </div>
+        <div id="trainer-next"></div>`;
+    }
+  },
+
+  answerTrainerFill(btn, selected, correct) {
+    if (this.trainer.answered) return;
+    this.trainer.answered = true;
+    document.querySelectorAll('#trainer-body .quiz-option').forEach(b => b.classList.add('disabled'));
+    if (selected === correct) {
+      btn.classList.add('correct'); this.haptic('MEDIUM'); this.playSound('correct');
+    } else {
+      btn.classList.add('wrong'); this.haptic('HEAVY'); this.playSound('wrong');
+      document.querySelectorAll('#trainer-body .quiz-option').forEach(b => { if (b.textContent === correct) b.classList.add('correct'); });
+    }
+    setTimeout(() => { this.trainer.i++; this.renderTrainerExercise(); }, 1100);
+  },
+
+  trainerPick(btn) {
+    this.haptic('LIGHT');
+    btn.style.visibility = 'hidden';
+    this.trainerPicked.push(btn.dataset.w);
+    const ans = document.getElementById('trainer-answer');
+    ans.innerHTML = this.trainerPicked.map(w => `<span class="game-token">${w}</span>`).join(' ');
+    if (this.trainerPicked.length === this.trainerWords.length) {
+      const ok = this.trainerPicked.join(' ') === this.trainerWords.join(' ');
+      if (ok) {
+        ans.classList.add('game-correct'); this.playSound('correct'); this.haptic('MEDIUM');
+        document.getElementById('trainer-next').innerHTML =
+          `<button class="btn-primary mission-next-btn" onclick="APP.trainer.i++;APP.renderTrainerExercise()">Дальше</button>`;
+      } else {
+        ans.classList.add('game-wrong'); this.playSound('wrong'); this.haptic('HEAVY');
+        document.getElementById('trainer-next').innerHTML =
+          `<button class="btn-secondary" onclick="APP.renderTrainerExercise()">Попробовать снова</button>`;
       }
     }
   },

@@ -9,7 +9,11 @@ const MISSIONS = [
     id: 1, level: 'A1', emoji: '🌹', title: 'Первое сообщение',
     goal: 'Он написал первым. Ответь так, чтобы захотелось продолжить разговор.',
     wordIds: [4, 5, 18, 48, 52, 49, 50, 46],
-    verbIds: [16, 8], grammarId: 4, phraseIds: [21, 22, 23, 26],
+    verbIds: [16, 8], grammarId: 1, phraseIds: [21, 22, 23, 26],
+    exercises: [
+      { type: 'fill_blank', sentence_tr: 'A__k', sentence_ru: 'Любовь (вставь букву)', options: ['ş', 's', 'ç', 'c'], correct: 'ş' },
+      { type: 'word_order', words: ['Seni', 'düşünüyorum'], correct: 'Seni düşünüyorum', translation: 'Думаю о тебе' },
+    ],
     dialog: [
       { s: 'he', tr: 'Merhaba 🙂', ru: 'Привет' },
       { s: 'he', tr: 'Nasılsın?', ru: 'Как ты?' },
@@ -36,6 +40,10 @@ const MISSIONS = [
     goal: 'Вы встретились вживую. Представься и узнай о нём.',
     wordIds: [46, 32, 33, 25, 26, 68],
     verbIds: [17, 13], grammarId: 3, phraseIds: [1, 2, 3, 9],
+    exercises: [
+      { type: 'fill_blank', sentence_tr: '_____ Ksenia\'yım.', sentence_ru: 'Я Ксения.', options: ['Ben', 'Sen', 'O', 'Biz'], correct: 'Ben' },
+      { type: 'word_order', words: ['adım', 'Benim', 'Mehmet'], correct: 'Benim adım Mehmet', translation: 'Меня зовут Мехмет' },
+    ],
     dialog: [
       { s: 'he', tr: 'Memnun oldum! Adın ne?', ru: 'Приятно познакомиться! Как тебя зовут?' },
       { s: 'you', tr: 'Benim adım Ksenia. Senin adın ne?', ru: 'Меня зовут Ксения. А тебя?' },
@@ -60,7 +68,11 @@ const MISSIONS = [
     id: 3, level: 'A1', emoji: '☕', title: 'Первое свидание',
     goal: 'Спланируй свидание и пригласи его в кафе.',
     wordIds: [32, 33, 45, 384, 407, 408],
-    verbIds: [2, 12], grammarId: 4, phraseIds: [11, 16, 17, 18],
+    verbIds: [2, 12], grammarId: 10, phraseIds: [11, 16, 17, 18],
+    exercises: [
+      { type: 'fill_blank', sentence_tr: 'Ben çok mutlu___.', sentence_ru: 'Я очень счастлива.', options: ['yum', 'sun', 'yuz', '—'], correct: 'yum' },
+      { type: 'word_order', words: ['güzelsin', 'Çok'], correct: 'Çok güzelsin', translation: 'Ты очень красивая' },
+    ],
     dialog: [
       { s: 'he', tr: 'Bu akşam müsait misin?', ru: 'Ты свободна сегодня вечером?' },
       { s: 'you', tr: 'Evet, müsaitim 🙂', ru: 'Да, свободна' },
@@ -85,7 +97,11 @@ const MISSIONS = [
     id: 4, level: 'A1', emoji: '💬', title: 'Каждый день на связи',
     goal: 'Утреннее и вечернее сообщение — турки это обожают.',
     wordIds: [52, 18, 54, 490, 491, 21],
-    verbIds: [16, 15], grammarId: 4, phraseIds: [21, 26, 27, 29],
+    verbIds: [16, 15], grammarId: 9, phraseIds: [21, 26, 27, 29],
+    exercises: [
+      { type: 'fill_blank', sentence_tr: 'Bu benim anne___.', sentence_ru: 'Это моя мама.', options: ['m', 'n', 'si', '—'], correct: 'm' },
+      { type: 'word_order', words: ['evim', 'Burası'], correct: 'Burası evim', translation: 'Это мой дом' },
+    ],
     dialog: [
       { s: 'he', tr: 'Günaydın güzelim ☀️', ru: 'Доброе утро, красавица' },
       { s: 'you', tr: 'Günaydın! İyi uyudun mu?', ru: 'Доброе утро! Хорошо спал?' },
@@ -110,7 +126,11 @@ const MISSIONS = [
     id: 5, level: 'A1', emoji: '😊', title: 'Комплименты',
     goal: 'Научись делать и принимать комплименты по-турецки.',
     wordIds: [43, 44, 9, 96, 98, 99],
-    verbIds: [6, 14], grammarId: 3, phraseIds: [6, 9, 11, 13],
+    verbIds: [6, 14], grammarId: 11, phraseIds: [6, 9, 11, 13],
+    exercises: [
+      { type: 'fill_blank', sentence_tr: '_____ yapıyorsun?', sentence_ru: 'Что ты делаешь?', options: ['Ne', 'Kim', 'Nerede', 'Kaç'], correct: 'Ne' },
+      { type: 'word_order', words: ['adın', 'ne', 'Senin'], correct: 'Senin adın ne', translation: 'Как тебя зовут?' },
+    ],
     dialog: [
       { s: 'he', tr: 'Bugün çok güzelsin 😍', ru: 'Сегодня ты очень красивая' },
       { s: 'you', tr: 'Teşekkür ederim! Sen de çok yakışıklısın', ru: 'Спасибо! Ты тоже очень красивый' },
@@ -135,7 +155,11 @@ const MISSIONS = [
     id: 6, level: 'A1', emoji: '📞', title: 'Голосовые и звонки',
     goal: 'Турки обожают голосовые. Научись назначать звонок.',
     wordIds: [49, 50, 51, 48, 98, 84],
-    verbIds: [13, 2], grammarId: 4, phraseIds: [24, 25, 28],
+    verbIds: [13, 2], grammarId: 12, phraseIds: [24, 25, 28],
+    exercises: [
+      { type: 'fill_blank', sentence_tr: 'Ben her gün çay _____.', sentence_ru: 'Я каждый день пью чай.', options: ['içerim', 'içer', 'içersin', 'içiyor'], correct: 'içerim' },
+      { type: 'word_order', words: ['yaşar', 'Türkiye\'de', 'O'], correct: 'O Türkiye\'de yaşar', translation: 'Он живёт в Турции' },
+    ],
     dialog: [
       { s: 'he', tr: 'Sesini özledim, arayabilir miyim?', ru: 'Скучаю по твоему голосу, можно позвонить?' },
       { s: 'you', tr: 'Tabii ki! Beni ara 📞', ru: 'Конечно! Позвони мне' },
@@ -160,7 +184,11 @@ const MISSIONS = [
     id: 7, level: 'A1', emoji: '🍽️', title: 'В кафе вместе',
     goal: 'Закажи еду и напитки на вашем свидании в кафе.',
     wordIds: [384, 385, 386, 407, 408, 326],
-    verbIds: [11, 12], grammarId: 4, phraseIds: [12, 13],
+    verbIds: [11, 12], grammarId: 5, phraseIds: [12, 13],
+    exercises: [
+      { type: 'fill_blank', sentence_tr: '_____ (Не понимаю).', sentence_ru: 'Я не понимаю.', options: ['Anlamıyorum', 'Anlıyorum', 'Anladım', 'Anlarım'], correct: 'Anlamıyorum' },
+      { type: 'word_order', words: ['değilim', 'Ben', 'aç'], correct: 'Ben aç değilim', translation: 'Я не голодна' },
+    ],
     dialog: [
       { s: 'he', tr: 'Ne içmek istersin?', ru: 'Что будешь пить?' },
       { s: 'you', tr: 'Bir Türk kahvesi lütfen', ru: 'Один турецкий кофе, пожалуйста' },
@@ -185,7 +213,11 @@ const MISSIONS = [
     id: 8, level: 'A1', emoji: '🛍️', title: 'Вместе по магазинам',
     goal: 'Спроси цену, попроси скидку, расплатись.',
     wordIds: [342, 344, 345, 346, 347, 349],
-    verbIds: [9, 14], grammarId: 5, phraseIds: [53],
+    verbIds: [9, 14], grammarId: 7, phraseIds: [53],
+    exercises: [
+      { type: 'fill_blank', sentence_tr: 'Ev___ gidiyorum.', sentence_ru: 'Я иду домой.', options: ['e', 'de', 'den', 'im'], correct: 'e' },
+      { type: 'word_order', words: ['gidiyorum', 'Markete'], correct: 'Markete gidiyorum', translation: 'Я иду в магазин' },
+    ],
     dialog: [
       { s: 'you', tr: 'Bu ne kadar?', ru: 'Сколько это стоит?' },
       { s: 'he', tr: 'Yüz lira', ru: 'Сто лир' },
@@ -210,7 +242,11 @@ const MISSIONS = [
     id: 9, level: 'A1', emoji: '🚕', title: 'Такси и транспорт',
     goal: 'Объясни водителю, куда ехать, и доберись сама.',
     wordIds: [372, 373, 374, 375, 376],
-    verbIds: [3, 2], grammarId: 5, phraseIds: [],
+    verbIds: [3, 2], grammarId: 8, phraseIds: [],
+    exercises: [
+      { type: 'fill_blank', sentence_tr: '_____ (Я дома).', sentence_ru: 'Я дома.', options: ['Evdeyim', 'Eve gidiyorum', 'Evden', 'Evim'], correct: 'Evdeyim' },
+      { type: 'word_order', words: ['kafedeyim', 'Ben'], correct: 'Ben kafedeyim', translation: 'Я в кафе' },
+    ],
     dialog: [
       { s: 'you', tr: 'Taksim\'e gitmek istiyorum', ru: 'Хочу поехать в Таксим' },
       { s: 'he', tr: 'Tabii, buyurun', ru: 'Конечно, садитесь' },
@@ -235,7 +271,11 @@ const MISSIONS = [
     id: 10, level: 'A1', emoji: '❤️', title: 'Признание в чувствах',
     goal: 'Самый важный момент — скажи о своих чувствах.',
     wordIds: [19, 20, 1, 60, 21, 87],
-    verbIds: [6, 5], grammarId: 4, phraseIds: [7, 10, 19],
+    verbIds: [6, 5], grammarId: 13, phraseIds: [7, 10, 19],
+    exercises: [
+      { type: 'fill_blank', sentence_tr: 'Rusya___ (Я из России).', sentence_ru: 'Я из России.', options: ['\'danım', '\'dayım', '\'ya', '\'da'], correct: '\'danım' },
+      { type: 'word_order', words: ['geldim', 'İşten'], correct: 'İşten geldim', translation: 'Я пришёл с работы' },
+    ],
     dialog: [
       { s: 'he', tr: 'Sana bir şey söylemek istiyorum...', ru: 'Хочу тебе кое-что сказать...' },
       { s: 'he', tr: 'Seni seviyorum ❤️', ru: 'Я тебя люблю' },
@@ -261,6 +301,10 @@ const MISSIONS = [
     goal: 'Договоритесь, как провести выходные вместе.',
     wordIds: [383, 387, 390, 419, 54],
     verbIds: [4, 1], grammarId: 4, phraseIds: [56, 59],
+    exercises: [
+      { type: 'fill_blank', sentence_tr: 'Ne yap___sun?', sentence_ru: 'Что ты делаешь (сейчас)?', options: ['ıyor', 'ar', 'tı', 'acak'], correct: 'ıyor' },
+      { type: 'word_order', words: ['izliyorum', 'Film'], correct: 'Film izliyorum', translation: 'Я смотрю фильм' },
+    ],
     dialog: [
       { s: 'he', tr: 'Hafta sonu ne yapalım?', ru: 'Что будем делать на выходных?' },
       { s: 'you', tr: 'Bir film izleyelim mi?', ru: 'Посмотрим фильм?' },
@@ -285,7 +329,11 @@ const MISSIONS = [
     id: 12, level: 'A1', emoji: '🎁', title: 'Праздники и подарки',
     goal: 'Поздравь его и выбери подарок к особому дню.',
     wordIds: [212, 195, 215, 214, 73],
-    verbIds: [9, 10], grammarId: 5, phraseIds: [36, 46],
+    verbIds: [9, 10], grammarId: 6, phraseIds: [36, 46],
+    exercises: [
+      { type: 'fill_blank', sentence_tr: 'Dün eve _____ (пришёл).', sentence_ru: 'Вчера я пришёл домой.', options: ['geldim', 'geliyorum', 'gelirim', 'geleceğim'], correct: 'geldim' },
+      { type: 'word_order', words: ['aldım', 'Hediye'], correct: 'Hediye aldım', translation: 'Я купила подарок' },
+    ],
     dialog: [
       { s: 'he', tr: 'Bugün doğum günüm 🎂', ru: 'Сегодня мой день рождения' },
       { s: 'choose', q: 'Поздравь его', options: [

@@ -805,6 +805,20 @@ body {
 
 .mission-test-counter { text-align: center; font-size: .8rem; font-weight: 800; color: var(--text-muted); margin-bottom: 1rem; }
 
+/* Trainer */
+.trainer-counter { text-align: center; font-size: .8rem; font-weight: 800; color: var(--text-muted); margin-bottom: 1rem; }
+.trainer-q {
+  background: var(--card); border-radius: 16px; padding: 1.5rem 1.25rem; text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 1.25rem;
+}
+.trainer-sentence { font-size: 1.4rem; font-weight: 900; color: var(--text); line-height: 1.5; }
+.trainer-blank {
+  display: inline-block; min-width: 50px; background: #fff3e0; color: #E65100;
+  border-bottom: 3px dashed #FF9800; border-radius: 4px; padding: 0 8px; font-weight: 900;
+}
+.trainer-ru { font-size: .9rem; color: var(--text-muted); margin-top: 8px; }
+.trainer-hint { font-size: .75rem; color: var(--text-muted); margin-top: 6px; text-transform: uppercase; letter-spacing: .04em; font-weight: 700; }
+
 /* Reward */
 .step-reward { text-align: center; padding-top: 2rem; }
 .reward-emoji { font-size: 4.5rem; animation: popIn .5s ease; }

@@ -297,4 +297,58 @@ const GRAMMAR_LESSONS = [
 </div>
 <p class="grammar-tip">💡 «Aşkım», «canım», «hayatım» — это всё «-im»: любовь МОЯ, душа МОЯ. Ты уже знаешь принадлежность!</p>`,
   },
+  {
+    id: 10, title: 'Глагол «быть» (olmak)', emoji: '🪞', level: 'A1',
+    desc: 'Я есть, ты есть — окончания сказуемости',
+    content: `<h3>«Быть» в настоящем времени</h3>
+<p>В турецком нет отдельного слова «я есть». Вместо него к слову добавляется <strong>личное окончание</strong>.</p>
+<div class="grammar-table">
+<div class="grammar-row"><span class="g-letter">Ben</span><span class="g-sound">-im / -ım</span><span class="g-example">Mutluyum — Я счастлива</span></div>
+<div class="grammar-row"><span class="g-letter">Sen</span><span class="g-sound">-sin / -sın</span><span class="g-example">Güzelsin — Ты красивая</span></div>
+<div class="grammar-row"><span class="g-letter">O</span><span class="g-sound">(нет)</span><span class="g-example">O Türk — Он турок</span></div>
+<div class="grammar-row"><span class="g-letter">Biz</span><span class="g-sound">-iz / -ız</span><span class="g-example">Hazırız — Мы готовы</span></div>
+</div>
+<p class="grammar-box">«Я учитель» → Öğretmenim. «Ты дома?» → Evde misin?</p>
+<p class="grammar-tip">💡 «Nasılsın?» = «как ты есть?» — буквально nasıl + sın. Ты уже это говоришь!</p>`,
+  },
+  {
+    id: 11, title: 'Вопросительные слова', emoji: '❓', level: 'A1',
+    desc: 'Ne, kim, nerede, nasıl, kaç',
+    content: `<h3>Главные вопросительные слова</h3>
+<div class="grammar-table">
+<div class="grammar-row"><span class="g-letter">Ne?</span><span class="g-sound">Что?</span><span class="g-example">Ne yapıyorsun? — Что делаешь?</span></div>
+<div class="grammar-row"><span class="g-letter">Kim?</span><span class="g-sound">Кто?</span><span class="g-example">Bu kim? — Кто это?</span></div>
+<div class="grammar-row"><span class="g-letter">Nerede?</span><span class="g-sound">Где?</span><span class="g-example">Neredesin? — Где ты?</span></div>
+<div class="grammar-row"><span class="g-letter">Nasıl?</span><span class="g-sound">Как?</span><span class="g-example">Nasılsın? — Как ты?</span></div>
+<div class="grammar-row"><span class="g-letter">Kaç?</span><span class="g-sound">Сколько?</span><span class="g-example">Kaç yaşındasın? — Сколько тебе лет?</span></div>
+<div class="grammar-row"><span class="g-letter">Ne zaman?</span><span class="g-sound">Когда?</span><span class="g-example">Ne zaman geliyorsun? — Когда придёшь?</span></div>
+</div>
+<p class="grammar-tip">💡 «Nereli​sin?» — «откуда ты?». Эти слова откроют любой разговор.</p>`,
+  },
+  {
+    id: 12, title: 'Geniş Zaman (-ir/-er/-ar)', emoji: '🔁', level: 'A1',
+    desc: 'Настоящее обычное — то, что делаешь всегда',
+    content: `<h3>Geniş Zaman — настоящее обычное время</h3>
+<p>Описывает привычки и регулярные действия («обычно», «каждый день»). Основа глагола + <strong>-ir / -er / -ar / -ur</strong>.</p>
+<div class="grammar-table">
+<div class="grammar-row"><span class="g-letter">içmek → içerim</span><span class="g-sound">пью (обычно)</span><span class="g-example">Her gün çay içerim</span></div>
+<div class="grammar-row"><span class="g-letter">yaşamak → yaşar</span><span class="g-sound">живёт</span><span class="g-example">O İstanbul'da yaşar</span></div>
+<div class="grammar-row"><span class="g-letter">sevmek → severim</span><span class="g-sound">люблю</span><span class="g-example">Seni çok severim</span></div>
+</div>
+<p class="grammar-box">Сравни: «içiyorum» = пью прямо сейчас. «içerim» = пью обычно, каждый день.</p>
+<p class="grammar-tip">💡 «Ne yaparsın?» — «чем занимаешься (по жизни)?». Частый вопрос при знакомстве.</p>`,
+  },
+  {
+    id: 13, title: 'Исходный падеж (-den/-dan)', emoji: '⬅️', level: 'A1',
+    desc: 'Откуда? От кого?',
+    content: `<h3>Откуда? (-den / -dan)</h3>
+<p>Чтобы сказать «откуда» или «от», добавь <strong>-den</strong> (после мягких) или <strong>-dan</strong> (после твёрдых).</p>
+<div class="grammar-table">
+<div class="grammar-row"><span class="g-letter">ev → evden</span><span class="g-sound">из дома</span><span class="g-example">Evden çıkıyorum — Выхожу из дома</span></div>
+<div class="grammar-row"><span class="g-letter">Rusya → Rusya'dan</span><span class="g-sound">из России</span><span class="g-example">Rusya'danım — Я из России</span></div>
+<div class="grammar-row"><span class="g-letter">iş → işten</span><span class="g-sound">с работы</span><span class="g-example">İşten geldim — Пришёл с работы</span></div>
+</div>
+<p class="grammar-box">После глухих согласных → -ten/-tan: «işten» (с работы).</p>
+<p class="grammar-tip">💡 Тройка падежей: -e (куда) · -de (где) · -den (откуда). Запомни их вместе!</p>`,
+  },
 ];
