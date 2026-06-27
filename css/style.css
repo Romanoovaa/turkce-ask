@@ -218,7 +218,7 @@ body {
 
 /* ===== HOME ===== */
 .home, .nav-screen {
-  padding: 0 0 5rem;
+  padding: 0 0 calc(4.5rem + env(safe-area-inset-bottom, 0px));
   background: var(--bg);
 }
 
@@ -226,7 +226,7 @@ body {
 .home-review {
   margin: .75rem 1rem 0;
   background: linear-gradient(135deg, #7B1FA2, #E040FB);
-  border-radius: var(--radius);
+  border-radius: 18px;
   padding: 1rem 1.25rem;
   color: white;
   cursor: pointer;
@@ -337,9 +337,9 @@ body {
 
 /* Continue card */
 .home-continue {
-  margin: 0 1rem;
+  margin: .5rem 1rem 0;
   background: linear-gradient(135deg, var(--pink), var(--orange));
-  border-radius: var(--radius);
+  border-radius: 18px;
   padding: 1rem 1.25rem;
   color: white;
   cursor: pointer;
@@ -444,10 +444,11 @@ body {
 
 /* ===== LEARN HUB ===== */
 .learn-header {
-  background: linear-gradient(135deg, #1565C0, #42A5F5);
+  background: linear-gradient(160deg, #1565C0, #42A5F5);
   color: white;
-  padding: 2.5rem 1.5rem 2rem;
-  border-radius: 0 0 28px 28px;
+  padding: 1.5rem 1.25rem 1.75rem;
+  padding-top: calc(env(safe-area-inset-top, 20px) + 16px);
+  border-radius: 0 0 24px 24px;
 }
 .learn-header h1 { font-size: 1.5rem; font-weight: 900; }
 .learn-header p { font-size: .85rem; opacity: .85; margin-top: 4px; }
@@ -633,7 +634,8 @@ body {
   padding-bottom: 2rem;
 }
 .cards-header {
-  padding: 1.25rem 1rem;
+  padding: 1rem 1rem;
+  padding-top: calc(env(safe-area-inset-top, 20px) + 8px);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -796,7 +798,8 @@ body {
   padding-bottom: 2rem;
 }
 .quiz-header {
-  padding: 1.25rem 1rem;
+  padding: 1rem 1rem;
+  padding-top: calc(env(safe-area-inset-top, 20px) + 8px);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -1018,10 +1021,11 @@ body {
 
 /* ===== PROFILE ===== */
 .profile-header {
-  background: linear-gradient(135deg, #9C27B0, #E91E63);
+  background: linear-gradient(160deg, #9C27B0, #E91E63);
   color: white;
-  padding: 2.5rem 1.5rem 2rem;
-  border-radius: 0 0 28px 28px;
+  padding: 1.5rem 1.25rem 1.75rem;
+  padding-top: calc(env(safe-area-inset-top, 20px) + 16px);
+  border-radius: 0 0 24px 24px;
   text-align: center;
 }
 .profile-level-emoji { font-size: 3rem; animation: float 3s ease-in-out infinite; }
@@ -1204,10 +1208,11 @@ body {
 
 /* ===== PHRASES ===== */
 .phrases-header {
-  background: linear-gradient(135deg, #FF9800, #FF5722);
+  background: linear-gradient(160deg, #FF9800, #FF5722);
   color: white;
-  padding: 2rem 1.5rem 1.75rem;
-  border-radius: 0 0 28px 28px;
+  padding: 1.5rem 1.25rem 1.75rem;
+  padding-top: calc(env(safe-area-inset-top, 20px) + 16px);
+  border-radius: 0 0 24px 24px;
   display: flex;
   align-items: center;
   gap: 14px;
@@ -1311,10 +1316,11 @@ body {
 
 /* ===== TRANSLATE ===== */
 .translate-header {
-  background: linear-gradient(135deg, #9C27B0, #E91E63);
+  background: linear-gradient(160deg, #9C27B0, #E91E63);
   color: white;
-  padding: 2.5rem 1.5rem 2rem;
-  border-radius: 0 0 28px 28px;
+  padding: 1.5rem 1.25rem 1.75rem;
+  padding-top: calc(env(safe-area-inset-top, 20px) + 16px);
+  border-radius: 0 0 24px 24px;
 }
 .translate-header h1 { font-size: 1.4rem; font-weight: 900; }
 .translate-header p { font-size: .85rem; opacity: .85; margin-top: 6px; }
